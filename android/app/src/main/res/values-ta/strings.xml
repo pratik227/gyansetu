@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ஞானசேது</string>
+    <string name="app_tagline">உங்கள் கற்றல் தோழன்</string>
+
+    <string name="cta_start">தொடங்குவோம்!</string>
+    <string name="cta_listen">கேளுங்கள்</string>
+    <string name="cta_back">பின்னால்</string>
+    <string name="cta_home">வீடு</string>
+
+    <string name="status_ready">தயார்</string>
+    <string name="status_offline">இணையம் இல்லாமல் இயங்கும்</string>
+
+    <string name="home_camera_title">படத்தைப் பார்</string>
+    <string name="home_camera_desc">எந்தப் பொருளின் படத்தையும் எடு</string>
+    <string name="home_ask_title">கேள்வி கேள்</string>
+    <string name="home_ask_desc">எதையும் கேள்</string>
+    <string name="home_topics_title">தலைப்புகள்</string>
+    <string name="home_topics_desc">புதிய சொற்களைக் கற்றுக்கொள்</string>
+    <string name="home_match_title">ஜோடி பொருத்து</string>
+    <string name="home_match_desc">ஜோடிகளைப் பொருத்தி வெல்</string>
+    <string name="home_quiz_title">அறிவு விளையாட்டு</string>
+    <string name="home_quiz_desc">விளையாடி கற்றுக்கொள்</string>
+</resources>

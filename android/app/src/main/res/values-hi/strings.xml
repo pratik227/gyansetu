@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ज्ञानसेतु</string>
+    <string name="app_tagline">आपका सीखने का साथी</string>
+
+    <string name="cta_start">चलो शुरू करें!</string>
+    <string name="cta_listen">सुनें</string>
+    <string name="cta_back">वापस</string>
+    <string name="cta_home">घर</string>
+
+    <string name="status_ready">तैयार</string>
+    <string name="status_offline">बिना इंटरनेट के चलता है</string>
+
+    <string name="home_camera_title">फोटो देखें</string>
+    <string name="home_camera_desc">किसी भी चीज़ की फोटो लें</string>
+    <string name="home_ask_title">सवाल पूछें</string>
+    <string name="home_ask_desc">कुछ भी पूछें</string>
+    <string name="home_topics_title">विषय</string>
+    <string name="home_topics_desc">नए शब्द सीखें</string>
+    <string name="home_match_title">जोड़ी बनाओ</string>
+    <string name="home_match_desc">जोड़ियाँ बनाकर जीतें</string>
+    <string name="home_quiz_title">ज्ञान खेल</string>
+    <string name="home_quiz_desc">खेलें और सीखें</string>
+</resources>

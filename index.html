@@ -1,0 +1,3181 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#FF9933" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="GyanSetu" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<title>GyanSetu — જ્ઞાનસેતુ — Offline AI Tutor</title>
+<link rel="stylesheet" href="vendor/baloo-bhai-2.css" />
+<style>
+  :root {
+    /* ── Brand palette ── */
+    --saffron: #FF9933;
+    --saffron-deep: #F37820;
+    --saffron-soft: #FFE4C7;
+    --green: #138808;
+    --green-deep: #0E6606;
+    --green-soft: #D6F0D2;
+    --sky: #4FC3F7;
+    --sky-deep: #0288D1;
+    --sky-soft: #E1F5FE;
+    --pink: #FF6F91;
+    --pink-deep: #D14570;
+    --pink-soft: #FFE0E9;
+    --yellow: #FFD43B;
+    --yellow-deep: #D9A800;
+    --yellow-soft: #FFF4C2;
+    --purple: #9C6ADE;
+    --purple-deep: #6E3FAB;
+    --purple-soft: #EDE3FA;
+
+    /* ── Neutral text + surface ── */
+    --ink: #2A1810;              /* primary text */
+    --ink-soft: #5C4A3E;         /* secondary / muted text */
+    --bg: #FFFAF2;               /* screen background */
+    --paper: #FFFFFF;            /* card surface */
+    --line: rgba(42, 24, 16, 0.08);  /* hairline divider */
+    --line-strong: rgba(42, 24, 16, 0.16);
+
+    /* ── Spacing scale (4px base) ── */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-7: 32px;
+
+    /* ── Border-radius scale ── */
+    --r-xs: 8px;
+    --r-sm: 12px;
+    --r-md: 16px;
+    --r-lg: 20px;
+    --r-xl: 24px;
+    --r-2xl: 32px;
+    --r-pill: 999px;
+
+    /* ── Border widths ── */
+    --bw-hair: 1.5px;
+    --bw: 2px;
+    --bw-strong: 2.5px;
+    --bw-bold: 3px;
+
+    /* ── Chunky drop-shadow scale ── */
+    --sh-sm: 0 3px 0 var(--ink);
+    --sh-md: 0 4px 0 var(--ink);
+    --sh-lg: 0 5px 0 var(--ink);
+    --sh-xl: 0 6px 0 var(--ink);
+    --sh-soft: 0 8px 24px rgba(42, 24, 16, 0.10);
+
+    /* ── Type scale ──
+       Sizes are multiplied by --fs-scale so the user-selected text-size
+       (regular / large / xl) actually scales every text element that uses
+       a token. App.js sets --fs-scale on the root wrapper. */
+    --fs-scale: 1;
+    --fs-xs:   calc(11px * var(--fs-scale));
+    --fs-sm:   calc(12px * var(--fs-scale));
+    --fs-md:   calc(13px * var(--fs-scale));
+    --fs-base: calc(14px * var(--fs-scale));
+    --fs-lg:   calc(16px * var(--fs-scale));
+    --fs-xl:   calc(18px * var(--fs-scale));
+    --fs-2xl:  calc(20px * var(--fs-scale));
+    --fs-3xl:  calc(22px * var(--fs-scale));
+    --fs-4xl:  calc(26px * var(--fs-scale));
+    --fs-5xl:  calc(32px * var(--fs-scale));
+
+    /* ── Semantic tokens ── */
+    --text-primary: var(--ink);
+    --text-muted: var(--ink-soft);
+    --text-inverse: #fff;
+    --color-success: var(--green);
+    --color-success-soft: var(--green-soft);
+    --color-warning: var(--yellow);
+    --color-warning-soft: var(--yellow-soft);
+    --color-error: var(--pink);
+    --color-error-soft: var(--pink-soft);
+    --color-info: var(--sky);
+    --color-info-soft: var(--sky-soft);
+    --color-accent: var(--saffron);
+    --color-accent-soft: var(--saffron-soft);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Baloo Bhai 2', system-ui, sans-serif;
+    background: #EAE2D4;
+    color: var(--ink);
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    overscroll-behavior: none;
+  }
+
+  #root {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    /* iOS-friendly: remove tap delay + ensure 44px tap targets via min-height
+       wherever a button isn't explicitly sized */
+    touch-action: manipulation;
+  }
+  input, textarea {
+    font-family: inherit;
+    /* Prevent iOS auto-zoom when input font-size < 16px */
+    font-size: 16px;
+  }
+
+  .gs-screen::-webkit-scrollbar { display: none; }
+  .gs-screen { -ms-overflow-style: none; scrollbar-width: none; }
+  /* Hide scrollbars on every inner scrollable region too. */
+  .gs-phone-screen ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  .gs-phone-screen * { scrollbar-width: none; -ms-overflow-style: none; }
+
+  /* Phone frame (desktop) */
+  .gs-phone {
+    width: 380px;
+    height: 780px;
+    border-radius: 44px;
+    background: #1a1a1a;
+    padding: 10px;
+    box-shadow:
+      0 50px 100px -20px rgba(0,0,0,0.35),
+      0 30px 60px -30px rgba(0,0,0,0.4),
+      inset 0 0 0 2px #2a2a2a;
+    position: relative;
+  }
+  .gs-phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 36px;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .gs-notch {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 24px;
+    background: #1a1a1a;
+    border-radius: 14px;
+    z-index: 100;
+  }
+
+  .gs-status {
+    height: 38px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .gs-status-icons { display: flex; gap: 5px; align-items: center; }
+
+  .gs-home-bar {
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .gs-home-bar::after {
+    content: '';
+    width: 110px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--ink);
+    opacity: 0.85;
+  }
+
+  .gs-screen {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* Mobile: full viewport, no frame.
+     Triggers on small portrait phones, narrow tablets, and any short
+     landscape phone where the 780px frame wouldn't fit. */
+  @media (max-width: 480px),
+         (orientation: portrait) and (max-height: 820px),
+         (orientation: landscape) and (max-height: 500px) {
+    body { background: var(--bg); }
+    .gs-phone {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+    .gs-phone-screen { border-radius: 0; }
+    .gs-notch { display: none; }
+    .gs-status { display: none; }
+    .gs-home-bar { display: none; }
+  }
+
+  /* Extra-small viewports (320–360px wide phones) — tighten spacing */
+  @media (max-width: 360px) {
+    :root {
+      --sp-4: 12px;
+      --sp-5: 16px;
+      --sp-6: 20px;
+    }
+  }
+
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(19, 136, 8, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(19, 136, 8, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(19, 136, 8, 0); }
+  }
+  .pulse-dot { animation: pulse-ring 1.8s infinite; }
+
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+  .owl-eye { transform-origin: center; animation: blink 4s infinite; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .bobbing { animation: bob 2.4s ease-in-out infinite; }
+
+  @keyframes flap-l {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(-20deg); }
+  }
+  @keyframes flap-r {
+    0%, 100% { transform: rotate(8deg); }
+    50% { transform: rotate(20deg); }
+  }
+  .wing-l { animation: flap-l 1.6s ease-in-out infinite; transform-origin: 100% 30%; }
+  .wing-r { animation: flap-r 1.6s ease-in-out infinite; transform-origin: 0% 30%; }
+
+  @keyframes slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .slide-up { animation: slide-up 0.45s cubic-bezier(.18,.89,.32,1.28); }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fade-in 0.4s ease-out; }
+
+  @keyframes pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .pop-in { animation: pop 0.5s cubic-bezier(.34,1.56,.64,1); }
+
+  @keyframes confetti-fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(800px) rotate(720deg); opacity: 0; }
+  }
+
+  @keyframes star-pop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+  }
+  .star-pop { animation: star-pop 0.5s cubic-bezier(.34,1.56,.64,1) both; }
+
+  @keyframes mic-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 111, 145, 0.5); }
+    50% { transform: scale(1.06); box-shadow: 0 0 0 16px rgba(255, 111, 145, 0); }
+  }
+  .mic-recording { animation: mic-pulse 1.2s infinite; }
+
+  @keyframes scan-line {
+    0% { top: 12%; }
+    50% { top: 78%; }
+    100% { top: 12%; }
+  }
+  .scan-line { animation: scan-line 2.4s ease-in-out infinite; }
+
+  .press {
+    transition:
+      transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.18s ease;
+  }
+  .press:hover { filter: brightness(1.04); }
+  .press:active { transform: scale(0.96); filter: none; }
+
+  .btn-chunky {
+    border-radius: 24px;
+    font-family: 'Baloo Bhai 2';
+    font-weight: 700;
+    border: 3px solid var(--ink);
+    box-shadow: 0 5px 0 var(--ink);
+    transition:
+      transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.2s ease;
+  }
+  /* Hover on devices that actually have a hover capability — no sticky hover on touch */
+  @media (hover: hover) {
+    .btn-chunky:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--ink); }
+  }
+  .btn-chunky:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--ink);
+  }
+
+  /* small loading dots */
+  @keyframes dots-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ─── Animation library ─── */
+  @keyframes screen-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.992); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .screen-in { animation: screen-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  @keyframes stagger-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .stagger-in { animation: stagger-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-7px); }
+    40%      { transform: translateX(7px); }
+    60%      { transform: translateX(-5px); }
+    80%      { transform: translateX(4px); }
+  }
+  .shake { animation: shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+  @keyframes ring-spin { to { transform: rotate(360deg); } }
+  .ring-spinner {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 3px solid rgba(243, 120, 32, 0.18);
+    border-top-color: var(--saffron-deep);
+    animation: ring-spin 0.9s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes input-glow {
+    0%, 100% { box-shadow: 0 4px 0 var(--ink); }
+    50%      { box-shadow: 0 4px 0 var(--ink), 0 0 0 5px rgba(19, 136, 8, 0.18); }
+  }
+  .ask-input:focus-within { animation: input-glow 1.8s ease-in-out infinite; }
+
+  /* Respect users who don't want motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ─────────────────────── DESIGN SYSTEM PRIMITIVES ───────────────────────
+     Use these in preference to ad-hoc inline styles. The design tokens
+     above are the single source of truth — only deviate when a screen has
+     a deliberate, named exception.
+  */
+
+  /* Card surface — chunky outlined white card, the workhorse container */
+  .gs-card {
+    background: var(--paper);
+    border: var(--bw-strong) solid var(--ink);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sh-md);
+    padding: var(--sp-4);
+  }
+  .gs-card-soft {
+    background: var(--paper);
+    border: var(--bw) solid var(--line-strong);
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+  }
+  .gs-card-tinted {
+    border: var(--bw) solid currentColor;
+    border-radius: var(--r-lg);
+    padding: var(--sp-3) var(--sp-4);
+  }
+
+  /* Inline chip / pill — for stats, statuses, tags */
+  .gs-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    padding: 3px var(--sp-3);
+    border-radius: var(--r-pill);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  /* Circular icon button — 44px tap target with chunky outline */
+  .gs-icon-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-pill);
+    background: var(--paper);
+    border: var(--bw-strong) solid var(--ink);
+    box-shadow: var(--sh-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Typography utilities */
+  .gs-h1 { font-size: var(--fs-3xl); font-weight: 800; color: var(--text-primary); line-height: 1.05; }
+  .gs-h2 { font-size: var(--fs-2xl); font-weight: 800; color: var(--text-primary); line-height: 1.1; }
+  .gs-h3 { font-size: var(--fs-lg); font-weight: 800; color: var(--text-primary); line-height: 1.15; }
+  .gs-body { font-size: var(--fs-base); font-weight: 600; color: var(--text-primary); line-height: 1.35; }
+  .gs-muted { font-size: var(--fs-md); font-weight: 600; color: var(--text-muted); line-height: 1.3; }
+  .gs-tiny { font-size: var(--fs-xs); font-weight: 700; color: var(--text-muted); line-height: 1.2; }
+  .gs-eyebrow {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Screen content padding — gives every screen the same gutters */
+  .gs-screen-pad { padding: var(--sp-4) var(--sp-4) var(--sp-4); }
+
+  /* Header row used by every detail screen: back-button + title cluster */
+  .gs-header {
+    display: flex;
+    align-items: center;
+    padding: var(--sp-4) var(--sp-4) var(--sp-3);
+    gap: var(--sp-3);
+  }
+
+  /* Focus ring (a11y) — applied via :focus-visible to avoid mouse-click rings */
+  .press:focus-visible,
+  .gs-icon-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--sh-sm), 0 0 0 4px rgba(255, 153, 51, 0.45);
+  }
+
+  /* Disabled state — visually consistent across all buttons */
+  button:disabled, .gs-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+  // Register the service worker for offline-first PWA install. No-op when run from file://.
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+
+<script src="vendor/react.production.min.js"></script>
+<script src="vendor/react-dom.production.min.js"></script>
+<script src="vendor/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+/* ─────────────────────── OFFLINE KNOWLEDGE BASE ───────────────────────
+   Hierarchical bilingual chunks: topic → item → fact + story.
+   Used by the Ask screen (keyword RAG) and Camera result.
+*/
+const KB = {
+  animals: [
+    { en: 'cow', gu: 'ગાય', phon: '/kaʊ/', icon: '🐄',
+      story_gu: 'ગાય દૂધ આપે છે. તે ઘાસ ખાય છે.',
+      story_en: 'The cow gives us milk. It eats grass.' },
+    { en: 'dog', gu: 'કૂતરો', phon: '/dɒɡ/', icon: '🐕',
+      story_gu: 'કૂતરો વફાદાર પ્રાણી છે. તે "ભૌ ભૌ" બોલે છે.',
+      story_en: 'The dog is a loyal animal. It says "woof woof".' },
+    { en: 'cat', gu: 'બિલાડી', phon: '/kæt/', icon: '🐈',
+      story_gu: 'બિલાડી દૂધ પીવે છે. તે "મ્યાઉં" બોલે છે.',
+      story_en: 'The cat drinks milk. It says "meow".' },
+    { en: 'elephant', gu: 'હાથી', phon: '/ˈel.ɪ.fənt/', icon: '🐘',
+      story_gu: 'હાથી મોટું પ્રાણી છે. તેને લાંબી સૂંઢ હોય છે.',
+      story_en: 'The elephant is a big animal. It has a long trunk.' },
+    { en: 'lion', gu: 'સિંહ', phon: '/ˈlaɪ.ən/', icon: '🦁',
+      story_gu: 'સિંહ જંગલનો રાજા છે. તે જોરથી ગર્જે છે.',
+      story_en: 'The lion is the king of the jungle. It roars loudly.' },
+    { en: 'tiger', gu: 'વાઘ', phon: '/ˈtaɪ.ɡər/', icon: '🐅',
+      story_gu: 'વાઘ ભારતનું રાષ્ટ્રીય પ્રાણી છે.',
+      story_en: 'The tiger is the national animal of India.' },
+    { en: 'monkey', gu: 'વાંદરો', phon: '/ˈmʌŋ.ki/', icon: '🐒',
+      story_gu: 'વાંદરો ઝાડ પર કૂદે છે. તે કેળાં ખાય છે.',
+      story_en: 'The monkey jumps on trees. It eats bananas.' },
+    { en: 'rabbit', gu: 'સસલું', phon: '/ˈræb.ɪt/', icon: '🐇',
+      story_gu: 'સસલું ગાજર ખાય છે. તે ઝડપથી દોડે છે.',
+      story_en: 'The rabbit eats carrots. It runs fast.' },
+  ],
+  fruits: [
+    { en: 'apple', gu: 'સફરજન', phon: '/ˈæp.əl/', icon: '🍎',
+      story_gu: 'સફરજન લાલ ફળ છે. તે મીઠું હોય છે.',
+      story_en: 'Apple is a red fruit. It tastes sweet.' },
+    { en: 'banana', gu: 'કેળું', phon: '/bəˈnæn.ə/', icon: '🍌',
+      story_gu: 'કેળું પીળું ફળ છે. તે વાંદરાને બહુ ભાવે છે.',
+      story_en: 'Banana is a yellow fruit. Monkeys love it.' },
+    { en: 'mango', gu: 'કેરી', phon: '/ˈmæŋ.ɡoʊ/', icon: '🥭',
+      story_gu: 'કેરી ફળોની રાણી છે. ઉનાળામાં મળે છે.',
+      story_en: 'Mango is the queen of fruits. It comes in summer.' },
+    { en: 'orange', gu: 'નારંગી', phon: '/ˈɒr.ɪndʒ/', icon: '🍊',
+      story_gu: 'નારંગી ખાટું મીઠું ફળ છે. તેમાં વિટામિન C હોય છે.',
+      story_en: 'Orange is sweet and sour. It has vitamin C.' },
+    { en: 'grape', gu: 'દ્રાક્ષ', phon: '/ɡreɪp/', icon: '🍇',
+      story_gu: 'દ્રાક્ષ નાનું ગોળ ફળ છે.',
+      story_en: 'Grapes are small round fruits.' },
+    { en: 'watermelon', gu: 'તરબૂચ', phon: '/ˈwɔː.tərˌmel.ən/', icon: '🍉',
+      story_gu: 'તરબૂચ ઉનાળાનું ફળ છે. તેમાં બહુ પાણી હોય છે.',
+      story_en: 'Watermelon is a summer fruit. It has lots of water.' },
+  ],
+  vegetables: [
+    { en: 'tomato', gu: 'ટામેટું', phon: '/təˈmeɪ.toʊ/', icon: '🍅',
+      story_gu: 'ટામેટું લાલ શાક છે.', story_en: 'Tomato is a red vegetable.' },
+    { en: 'potato', gu: 'બટાકા', phon: '/pəˈteɪ.toʊ/', icon: '🥔',
+      story_gu: 'બટાકા જમીનમાં ઉગે છે.', story_en: 'Potatoes grow in the ground.' },
+    { en: 'carrot', gu: 'ગાજર', phon: '/ˈkær.ət/', icon: '🥕',
+      story_gu: 'ગાજર નારંગી રંગનું હોય છે.', story_en: 'Carrots are orange.' },
+    { en: 'onion', gu: 'ડુંગળી', phon: '/ˈʌn.jən/', icon: '🧅',
+      story_gu: 'ડુંગળી કાપતા આંસુ આવે છે.', story_en: 'Onions make us cry.' },
+  ],
+  classroom: [
+    { en: 'book', gu: 'પુસ્તક', phon: '/bʊk/', icon: '📖',
+      story_gu: 'પુસ્તક વાંચીને આપણે શીખીએ છીએ.',
+      story_en: 'We learn by reading books.' },
+    { en: 'pencil', gu: 'પેન્સિલ', phon: '/ˈpen.səl/', icon: '✏️',
+      story_gu: 'પેન્સિલથી લખીએ અને ચીતરીએ.',
+      story_en: 'We write and draw with a pencil.' },
+    { en: 'pen', gu: 'પેન', phon: '/pen/', icon: '🖊️',
+      story_gu: 'પેનની શાહી હોય છે.',
+      story_en: 'A pen has ink inside.' },
+    { en: 'bag', gu: 'દફતર', phon: '/bæɡ/', icon: '🎒',
+      story_gu: 'દફતરમાં પુસ્તકો રાખીએ.',
+      story_en: 'We keep books in a bag.' },
+    { en: 'blackboard', gu: 'કાળું પાટિયું', phon: '/ˈblæk.bɔːrd/', icon: '🪧',
+      story_gu: 'શિક્ષક પાટિયા પર લખે છે.',
+      story_en: 'The teacher writes on the blackboard.' },
+    { en: 'eraser', gu: 'રબર', phon: '/ɪˈreɪ.zər/', icon: '🩹',
+      story_gu: 'રબરથી પેન્સિલની ભૂલ ભૂંસીએ.',
+      story_en: 'We erase pencil mistakes with a rubber.' },
+    { en: 'ruler', gu: 'ફુટપટ્ટી', phon: '/ˈruː.lər/', icon: '📏',
+      story_gu: 'ફુટપટ્ટીથી સીધી લીટી દોરીએ.',
+      story_en: 'We draw straight lines with a ruler.' },
+    { en: 'chair', gu: 'ખુરશી', phon: '/tʃer/', icon: '🪑',
+      story_gu: 'આપણે ખુરશી પર બેસીએ.',
+      story_en: 'We sit on a chair.' },
+  ],
+  colors: [
+    { en: 'red', gu: 'લાલ', icon: '🔴', story_gu: 'સફરજન અને ગુલાબ લાલ હોય છે.', story_en: 'Apples and roses are red.' },
+    { en: 'blue', gu: 'વાદળી', icon: '🔵', story_gu: 'આકાશ અને દરિયો વાદળી છે.', story_en: 'The sky and sea are blue.' },
+    { en: 'green', gu: 'લીલો', icon: '🟢', story_gu: 'ઘાસ અને પાંદડા લીલા છે.', story_en: 'Grass and leaves are green.' },
+    { en: 'yellow', gu: 'પીળો', icon: '🟡', story_gu: 'સૂર્ય અને કેળાં પીળાં છે.', story_en: 'The sun and bananas are yellow.' },
+    { en: 'orange', gu: 'કેસરી', icon: '🟠', story_gu: 'કેસરી રંગ ઊર્જાનો રંગ છે.', story_en: 'Saffron is the colour of energy.' },
+    { en: 'white', gu: 'સફેદ', icon: '⚪', story_gu: 'દૂધ અને બરફ સફેદ છે.', story_en: 'Milk and snow are white.' },
+    { en: 'black', gu: 'કાળો', icon: '⚫', story_gu: 'રાત કાળી હોય છે.', story_en: 'The night is black.' },
+    { en: 'pink', gu: 'ગુલાબી', icon: '🌸', story_gu: 'ગુલાબ ગુલાબી હોય છે.', story_en: 'Roses are pink.' },
+  ],
+  body: [
+    { en: 'eye', gu: 'આંખ', icon: '👁️', story_gu: 'આંખથી આપણે જોઈએ.', story_en: 'We see with our eyes.' },
+    { en: 'ear', gu: 'કાન', icon: '👂', story_gu: 'કાનથી આપણે સાંભળીએ.', story_en: 'We hear with our ears.' },
+    { en: 'nose', gu: 'નાક', icon: '👃', story_gu: 'નાકથી આપણે સૂંઘીએ.', story_en: 'We smell with our nose.' },
+    { en: 'mouth', gu: 'મોં', icon: '👄', story_gu: 'મોંથી આપણે બોલીએ અને ખાઈએ.', story_en: 'We speak and eat with our mouth.' },
+    { en: 'hand', gu: 'હાથ', icon: '✋', story_gu: 'હાથથી આપણે કામ કરીએ.', story_en: 'We work with our hands.' },
+    { en: 'foot', gu: 'પગ', icon: '🦶', story_gu: 'પગથી આપણે ચાલીએ.', story_en: 'We walk with our feet.' },
+  ],
+  family: [
+    { en: 'father', gu: 'પપ્પા', icon: '👨', story_gu: 'પપ્પા આપણા રક્ષક છે.', story_en: 'Father is our protector.' },
+    { en: 'mother', gu: 'મમ્મી', icon: '👩', story_gu: 'મમ્મી પ્રેમથી વાર્તા કહે છે.', story_en: 'Mother tells stories with love.' },
+    { en: 'brother', gu: 'ભાઈ', icon: '👦', story_gu: 'ભાઈ સાથે રમવાની મજા આવે.', story_en: 'It is fun to play with brother.' },
+    { en: 'sister', gu: 'બહેન', icon: '👧', story_gu: 'બહેન સાથે વાંચીએ.', story_en: 'We read with sister.' },
+    { en: 'grandfather', gu: 'દાદા', icon: '👴', story_gu: 'દાદા જૂની વાર્તાઓ કહે.', story_en: 'Grandfather tells old stories.' },
+    { en: 'grandmother', gu: 'દાદી', icon: '👵', story_gu: 'દાદી સ્વાદિષ્ટ ખાવાનું બનાવે.', story_en: 'Grandmother cooks tasty food.' },
+  ],
+  weather: [
+    { en: 'sun', gu: 'સૂર્ય', icon: '☀️', story_gu: 'સૂર્ય દિવસે પ્રકાશ આપે છે.', story_en: 'The sun gives light during day.' },
+    { en: 'rain', gu: 'વરસાદ', icon: '🌧️', story_gu: 'વરસાદ પાક ઉગાડે છે.', story_en: 'Rain helps crops grow.' },
+    { en: 'cloud', gu: 'વાદળ', icon: '☁️', story_gu: 'વાદળમાં પાણી હોય છે.', story_en: 'Clouds carry water.' },
+    { en: 'wind', gu: 'પવન', icon: '🌬️', story_gu: 'પવન પાંદડાં હલાવે છે.', story_en: 'Wind moves the leaves.' },
+    { en: 'rainbow', gu: 'મેઘધનુષ', icon: '🌈', story_gu: 'મેઘધનુષમાં સાત રંગ હોય.', story_en: 'A rainbow has seven colours.' },
+    { en: 'snow', gu: 'બરફ', icon: '❄️', story_gu: 'ઠંડી જગ્યાએ બરફ પડે.', story_en: 'Snow falls in cold places.' },
+  ],
+  transport: [
+    { en: 'car', gu: 'ગાડી', icon: '🚗', story_gu: 'ગાડી રસ્તા પર ચાલે છે.', story_en: 'A car runs on the road.' },
+    { en: 'bus', gu: 'બસ', icon: '🚌', story_gu: 'બસમાં ઘણા લોકો બેસે.', story_en: 'Many people travel by bus.' },
+    { en: 'train', gu: 'રેલગાડી', icon: '🚆', story_gu: 'રેલગાડી પાટા પર દોડે.', story_en: 'The train runs on tracks.' },
+    { en: 'cycle', gu: 'સાયકલ', icon: '🚲', story_gu: 'સાયકલ ચલાવવી મજાની છે.', story_en: 'Riding a cycle is fun.' },
+    { en: 'aeroplane', gu: 'વિમાન', icon: '✈️', story_gu: 'વિમાન આકાશમાં ઊડે છે.', story_en: 'An aeroplane flies in the sky.' },
+    { en: 'boat', gu: 'હોડી', icon: '⛵', story_gu: 'હોડી પાણી પર તરે છે.', story_en: 'A boat floats on water.' },
+  ],
+  numbers: [
+    { en: 'one', gu: 'એક', n: 1 },{ en: 'two', gu: 'બે', n: 2 },
+    { en: 'three', gu: 'ત્રણ', n: 3 },{ en: 'four', gu: 'ચાર', n: 4 },
+    { en: 'five', gu: 'પાંચ', n: 5 },{ en: 'six', gu: 'છ', n: 6 },
+    { en: 'seven', gu: 'સાત', n: 7 },{ en: 'eight', gu: 'આઠ', n: 8 },
+    { en: 'nine', gu: 'નવ', n: 9 },{ en: 'ten', gu: 'દસ', n: 10 },
+    { en: 'eleven', gu: 'અગિયાર', n: 11 },{ en: 'twelve', gu: 'બાર', n: 12 },
+    { en: 'thirteen', gu: 'તેર', n: 13 },{ en: 'fourteen', gu: 'ચૌદ', n: 14 },
+    { en: 'fifteen', gu: 'પંદર', n: 15 },{ en: 'sixteen', gu: 'સોળ', n: 16 },
+    { en: 'seventeen', gu: 'સત્તર', n: 17 },{ en: 'eighteen', gu: 'અઢાર', n: 18 },
+    { en: 'nineteen', gu: 'ઓગણીસ', n: 19 },{ en: 'twenty', gu: 'વીસ', n: 20 },
+  ],
+  days: [
+    { en: 'Sunday', gu: 'રવિવાર' },{ en: 'Monday', gu: 'સોમવાર' },
+    { en: 'Tuesday', gu: 'મંગળવાર' },{ en: 'Wednesday', gu: 'બુધવાર' },
+    { en: 'Thursday', gu: 'ગુરુવાર' },{ en: 'Friday', gu: 'શુક્રવાર' },
+    { en: 'Saturday', gu: 'શનિવાર' },
+  ],
+  facts: [
+    { keys: ['sky', 'blue', 'આકાશ', 'વાદળી'],
+      gu: 'આકાશ વાદળી દેખાય છે કારણ કે સૂર્યનો પ્રકાશ હવામાં છૂટો પડે છે. વાદળી રંગ સૌથી વધુ વેરાય છે!',
+      en: 'The sky looks blue because sunlight scatters in the air. Blue scatters the most!' },
+    { keys: ['sun', 'સૂર્ય'],
+      gu: 'સૂર્ય એક મોટો તારો છે. તે આપણને પ્રકાશ અને ગરમી આપે છે.',
+      en: 'The sun is a big star. It gives us light and warmth.' },
+    { keys: ['rainbow', 'મેઘધનુષ'],
+      gu: 'મેઘધનુષ સાત રંગો ધરાવે છે. વરસાદ પછી તે દેખાય છે.',
+      en: 'A rainbow has seven colours. It appears after rain.' },
+    { keys: ['water', 'પાણી'],
+      gu: 'પાણી જીવન માટે જરૂરી છે. તે ત્રણ રૂપમાં હોય છે — પ્રવાહી, બરફ અને વરાળ.',
+      en: 'Water is essential for life. It exists as liquid, ice and vapour.' },
+    { keys: ['moon', 'ચંદ્ર'],
+      gu: 'ચંદ્ર પૃથ્વીનો ઉપગ્રહ છે. તે રાત્રે ચમકે છે.',
+      en: 'The moon is Earth’s satellite. It shines at night.' },
+    { keys: ['star', 'તારો', 'તારા'],
+      gu: 'તારા સૂર્ય જેવા જ હોય છે, પણ બહુ દૂર છે.',
+      en: 'Stars are like our sun, but very far away.' },
+    { keys: ['india', 'ભારત'],
+      gu: 'ભારત આપણો દેશ છે. તેની રાજધાની નવી દિલ્હી છે.',
+      en: 'India is our country. Its capital is New Delhi.' },
+    { keys: ['gujarat', 'ગુજરાત'],
+      gu: 'ગુજરાત આપણું રાજ્ય છે. તેની રાજધાની ગાંધીનગર છે.',
+      en: 'Gujarat is our state. Its capital is Gandhinagar.' },
+  ],
+};
+
+/* RAG-style retrieval: lowercase keyword scan across keys + en + gu */
+function ragLookup(query) {
+  if (!query) return null;
+  const q = query.toLowerCase();
+  for (const f of KB.facts) {
+    for (const k of f.keys) {
+      if (q.includes(k.toLowerCase())) return { gu: f.gu, en: f.en };
+    }
+  }
+  for (const cat of ['animals','fruits','vegetables','classroom']) {
+    for (const it of KB[cat]) {
+      if (q.includes(it.en) || q.includes(it.gu)) {
+        return { gu: it.story_gu, en: it.story_en };
+      }
+    }
+  }
+  return null;
+}
+
+/* ─────────────────────── HOOKS ─────────────────────── */
+
+// Persist a value to localStorage under a key.
+function usePersistedState(key, defaultValue) {
+  const [v, setV] = useState(() => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw == null ? defaultValue : JSON.parse(raw);
+    } catch { return defaultValue; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(key, JSON.stringify(v)); } catch {}
+  }, [key, v]);
+  return [v, setV];
+}
+
+// TTS: speak a Gujarati string then English via Web Speech API.
+function useTTS() {
+  const [speaking, setSpeaking] = useState(false);
+  const voices = useRef([]);
+
+  useEffect(() => {
+    if (typeof speechSynthesis === 'undefined') return;
+    const load = () => { voices.current = speechSynthesis.getVoices(); };
+    load();
+    speechSynthesis.onvoiceschanged = load;
+    return () => { try { speechSynthesis.cancel(); } catch {} };
+  }, []);
+
+  const pickVoice = (langPrefix) =>
+    voices.current.find(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix));
+
+  const speak = useCallback((text, lang = 'en') => {
+    if (typeof speechSynthesis === 'undefined' || !text) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      const wantPrefix = lang === 'gu' ? 'gu' : (lang === 'hi' ? 'hi' : 'en');
+      const v = pickVoice(wantPrefix) || pickVoice('hi') || pickVoice('en');
+      if (v) u.voice = v;
+      u.lang = v ? v.lang : (wantPrefix === 'gu' ? 'gu-IN' : 'en-IN');
+      u.rate = 0.9; u.pitch = 1.05;
+      setSpeaking(true);
+      u.onend = () => setSpeaking(false);
+      u.onerror = () => setSpeaking(false);
+      speechSynthesis.speak(u);
+    } catch { setSpeaking(false); }
+  }, []);
+
+  const speakBilingual = useCallback((gu, en) => {
+    if (typeof speechSynthesis === 'undefined') return;
+    try {
+      speechSynthesis.cancel();
+      const guVoice = pickVoice('gu') || pickVoice('hi');
+      const enVoice = pickVoice('en');
+      const u1 = new SpeechSynthesisUtterance(gu);
+      if (guVoice) u1.voice = guVoice;
+      u1.lang = guVoice ? guVoice.lang : 'gu-IN';
+      u1.rate = 0.85;
+      const u2 = new SpeechSynthesisUtterance(en);
+      if (enVoice) u2.voice = enVoice;
+      u2.lang = enVoice ? enVoice.lang : 'en-IN';
+      u2.rate = 0.9;
+      setSpeaking(true);
+      u1.onend = () => speechSynthesis.speak(u2);
+      u2.onend = () => setSpeaking(false);
+      u2.onerror = u1.onerror = () => setSpeaking(false);
+      speechSynthesis.speak(u1);
+    } catch { setSpeaking(false); }
+  }, []);
+
+  const stop = useCallback(() => {
+    try { speechSynthesis.cancel(); } catch {}
+    setSpeaking(false);
+  }, []);
+
+  return { speak, speakBilingual, stop, speaking };
+}
+
+/* useSound: procedurally synthesised feedback chimes via Web Audio API.
+   No audio files shipped — keeps APK small and 100% offline. */
+function useSound(enabled) {
+  const ctxRef = useRef(null);
+  const ensure = () => {
+    if (!enabled) return null;
+    if (!ctxRef.current) {
+      const A = window.AudioContext || window.webkitAudioContext;
+      if (!A) return null;
+      ctxRef.current = new A();
+    }
+    if (ctxRef.current.state === 'suspended') ctxRef.current.resume();
+    return ctxRef.current;
+  };
+
+  const tone = (freq, dur = 0.18, type = 'sine', gain = 0.18, when = 0) => {
+    const ctx = ensure();
+    if (!ctx) return;
+    const t0 = ctx.currentTime + when;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  };
+
+  return useMemo(() => ({
+    success: () => { tone(660, 0.12); tone(880, 0.18, 'sine', 0.18, 0.1); tone(1320, 0.22, 'sine', 0.14, 0.2); },
+    error:   () => { tone(220, 0.16, 'sawtooth', 0.1); tone(180, 0.2, 'sawtooth', 0.08, 0.15); },
+    tap:     () => { tone(520, 0.05, 'square', 0.06); },
+    chime:   () => { tone(523, 0.1); tone(659, 0.1, 'sine', 0.18, 0.08); tone(784, 0.18, 'sine', 0.16, 0.16); },
+    levelUp: () => {
+      [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.16, 'triangle', 0.18, i * 0.09));
+    },
+  }), [enabled]);
+}
+
+// Camera: live video stream using getUserMedia. Falls back to mock mode.
+function useCamera(active) {
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const [state, setState] = useState('idle'); // idle | live | denied | unsupported
+
+  useEffect(() => {
+    if (!active) {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+      }
+      setState('idle');
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setState('unsupported'); return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false,
+        });
+        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play().catch(() => {});
+        }
+        setState('live');
+      } catch {
+        setState('denied');
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+      }
+    };
+  }, [active]);
+
+  return { videoRef, state };
+}
+
+/* ─────────────────────── BILINGUAL TEXT + ICONS ─────────────────────── */
+
+function Bi({ gu, en, mode = 'both', style = {}, guStyle = {}, enStyle = {}, inline = false }) {
+  if (mode === 'gu') return <span style={{ ...style, ...guStyle }}>{gu}</span>;
+  if (mode === 'en') return <span style={{ ...style, ...enStyle }}>{en}</span>;
+  if (inline) {
+    return (
+      <span style={style}>
+        <span style={guStyle}>{gu}</span>
+        <span style={{ opacity: 0.6, margin: '0 6px' }}>·</span>
+        <span style={enStyle}>{en}</span>
+      </span>
+    );
+  }
+  return (
+    <span style={{ display: 'block', ...style }}>
+      <span style={{ display: 'block', ...guStyle }}>{gu}</span>
+      <span style={{ display: 'block', opacity: 0.7, fontWeight: 500, fontSize: '0.7em', ...enStyle }}>{en}</span>
+    </span>
+  );
+}
+
+const Icon = {
+  Camera: ({ size = 32, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M5 11 H10 L12 8 H20 L22 11 H27 V25 H5 Z" stroke={color} strokeWidth="2.5" strokeLinejoin="round" fill="none"/>
+      <circle cx="16" cy="17" r="5" stroke={color} strokeWidth="2.5" fill="none"/>
+      <circle cx="23" cy="14" r="1" fill={color}/>
+    </svg>
+  ),
+  Question: ({ size = 32, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M11 11 Q 11 7 16 7 Q 21 7 21 11 Q 21 14 16 16 V19" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+      <circle cx="16" cy="24" r="1.6" fill={color}/>
+      <circle cx="16" cy="16" r="13" stroke={color} strokeWidth="2.5" fill="none"/>
+    </svg>
+  ),
+  Quiz: ({ size = 32, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M16 4 L19 11 L26.5 12 L21 17 L22.5 25 L16 21 L9.5 25 L11 17 L5.5 12 L13 11 Z" fill={color} stroke={color} strokeWidth="2" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Speaker: ({ size = 24, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M3 9 V15 H7 L13 19 V5 L7 9 Z" fill={color} stroke={color} strokeWidth="2" strokeLinejoin="round"/>
+      <path d="M16 8 Q 19 12 16 16" stroke={color} strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <path d="M18 5 Q 23 12 18 19" stroke={color} strokeWidth="2" strokeLinecap="round" fill="none"/>
+    </svg>
+  ),
+  Mic: ({ size = 32, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <rect x="12" y="5" width="8" height="14" rx="4" fill={color}/>
+      <path d="M7 14 V16 Q 7 23 16 23 Q 25 23 25 16 V14" stroke={color} strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+      <path d="M16 23 V28 M11 28 H21" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  Back: ({ size = 28, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 28 28" fill="none">
+      <path d="M18 5 L9 14 L18 23" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    </svg>
+  ),
+  Settings: ({ size = 24, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3" stroke={color} strokeWidth="2" fill="none"/>
+      <path d="M12 1 V4 M12 20 V23 M4.2 4.2 L6.3 6.3 M17.7 17.7 L19.8 19.8 M1 12 H4 M20 12 H23 M4.2 19.8 L6.3 17.7 M17.7 6.3 L19.8 4.2" stroke={color} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  User: ({ size = 24, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="8" r="4" stroke={color} strokeWidth="2" fill="none"/>
+      <path d="M4 21 Q 4 14 12 14 Q 20 14 20 21" stroke={color} strokeWidth="2" strokeLinecap="round" fill="none"/>
+    </svg>
+  ),
+  Star: ({ size = 24, filled = true, color = '#FFD43B' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M12 2 L15 9 L22.5 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L1.5 9.5 L9 9 Z"
+        fill={filled ? color : '#fff'} stroke="#2A1810"
+        strokeWidth="1.6" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Check: ({ size = 28, color = '#fff' }) => (
+    <svg width={size} height={size} viewBox="0 0 28 28" fill="none">
+      <path d="M5 14 L11 20 L23 8" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    </svg>
+  ),
+  Cross: ({ size = 28, color = '#fff' }) => (
+    <svg width={size} height={size} viewBox="0 0 28 28" fill="none">
+      <path d="M7 7 L21 21 M21 7 L7 21" stroke={color} strokeWidth="4" strokeLinecap="round"/>
+    </svg>
+  ),
+  Wifi: ({ size = 14, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none">
+      <path d="M2 5 Q 7 1 12 5" stroke={color} strokeWidth="1.6" fill="none" strokeLinecap="round"/>
+      <path d="M3.5 7.5 Q 7 4.5 10.5 7.5" stroke={color} strokeWidth="1.6" fill="none" strokeLinecap="round"/>
+      <path d="M5 10 Q 7 8 9 10" stroke={color} strokeWidth="1.6" fill="none" strokeLinecap="round"/>
+      <circle cx="7" cy="12" r="0.8" fill={color}/>
+    </svg>
+  ),
+  Battery: ({ size = 18, color = 'currentColor' }) => (
+    <svg width={size} height={size * 0.5} viewBox="0 0 24 12" fill="none">
+      <rect x="1" y="1" width="20" height="10" rx="2" stroke={color} strokeWidth="1.4" fill="none"/>
+      <rect x="22" y="4" width="1.6" height="4" rx="0.5" fill={color}/>
+      <rect x="3" y="3" width="14" height="6" rx="1" fill={color}/>
+    </svg>
+  ),
+  Send: ({ size = 24, color = 'currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M3 12 L21 4 L17 12 L21 20 Z" fill={color} stroke={color} strokeWidth="2" strokeLinejoin="round"/>
+    </svg>
+  ),
+};
+
+/* Bundled Iconify icons — fetched once from api.iconify.design at build time
+   and inlined here so the app NEVER hits the network for icons. Keeps the
+   demo working on absolute first launch even when the kid's tablet has no
+   connectivity. ~7 KB for 14 icons. */
+const ICONS = {
+  "camera-outline": "<path fill=\"currentColor\" d=\"M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m0 14H4V6h4.05l1.83-2h4.24l1.83 2H20zM12 7a5 5 0 0 0-5 5a5 5 0 0 0 5 5a5 5 0 0 0 5-5a5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3a3 3 0 0 1 3-3a3 3 0 0 1 3 3a3 3 0 0 1-3 3\"/>",
+  "comment-question-outline": "<path fill=\"currentColor\" d=\"M4 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4v3a1 1 0 0 0 1 1h.5c.25 0 .5-.1.7-.29L13.9 18H20a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 2h16v12h-6.92L10 19.08V16H4zm8.19 1.5c-.89 0-1.6.18-2.14.54c-.55.36-.83.96-.78 1.65h1.97c0-.28.1-.49.26-.63c.2-.14.42-.21.69-.21c.31 0 .58.08.76.26c.18.17.27.39.27.69c0 .28-.08.53-.22.74c-.17.22-.38.4-.64.54c-.52.32-.86.6-1.07.84c-.19.24-.29.58-.29 1.08h2c0-.28.05-.5.14-.68c.09-.17.26-.32.52-.47c.46-.21.84-.49 1.13-.85c.29-.37.44-.76.44-1.2q0-1.05-.81-1.68c-.54-.41-1.29-.62-2.23-.62M11 12v2h2v-2z\"/>",
+  "book-open-page-variant-outline": "<path fill=\"currentColor\" d=\"m19 1l-5 5v11l5-4.5zm2 4v13.5c-1.1-.35-2.3-.5-3.5-.5c-1.7 0-4.15.65-5.5 1.5V6c-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5c.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5c1.35-.85 3.8-1.5 5.5-1.5c1.65 0 3.35.3 4.75 1.05c.1.05.15.05.25.05c.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1M10 18.41C8.75 18.09 7.5 18 6.5 18c-1.06 0-2.32.19-3.5.5V7.13c.91-.4 2.14-.63 3.5-.63s2.59.23 3.5.63z\"/>",
+  "puzzle-outline": "<path fill=\"currentColor\" d=\"M22 13.5c0 1.76-1.3 3.22-3 3.46V20a2 2 0 0 1-2 2h-3.8v-.3a2.7 2.7 0 0 0-2.7-2.7c-1.5 0-2.7 1.21-2.7 2.7v.3H4a2 2 0 0 1-2-2v-3.8h.3C3.79 16.2 5 15 5 13.5s-1.21-2.7-2.7-2.7H2V7a2 2 0 0 1 2-2h3.04c.24-1.7 1.7-3 3.46-3s3.22 1.3 3.46 3H17a2 2 0 0 1 2 2v3.04c1.7.24 3 1.7 3 3.46M17 15h1.5a1.5 1.5 0 0 0 1.5-1.5a1.5 1.5 0 0 0-1.5-1.5H17V7h-5V5.5A1.5 1.5 0 0 0 10.5 4A1.5 1.5 0 0 0 9 5.5V7H4v2.12c1.76.68 3 2.38 3 4.38s-1.25 3.7-3 4.38V20h2.12a4.7 4.7 0 0 1 4.38-3c2 0 3.7 1.25 4.38 3H17z\"/>",
+  "trophy-variant-outline": "<path fill=\"currentColor\" d=\"M17 4V2H7v2H2v7c0 1.1.9 2 2 2h3.1a5.01 5.01 0 0 0 3.9 3.9v2.18C8 19.54 8 22 8 22h8s0-2.46-3-2.92V16.9a5.01 5.01 0 0 0 3.9-3.9H20c1.1 0 2-.9 2-2V4zM4 11V6h3v5zm11 1c0 1.65-1.35 3-3 3s-3-1.35-3-3V4h6zm5-1h-3V6h3z\"/>",
+  "paw": "<path fill=\"currentColor\" d=\"M8.35 3c1.18-.17 2.43 1.12 2.79 2.9c.36 1.77-.29 3.35-1.47 3.53c-1.17.18-2.43-1.11-2.8-2.89c-.37-1.77.3-3.35 1.48-3.54m7.15 0c1.19.19 1.85 1.77 1.5 3.54c-.38 1.78-1.63 3.07-2.81 2.89c-1.19-.18-1.84-1.76-1.47-3.53c.36-1.78 1.61-3.07 2.78-2.9M3 7.6c1.14-.49 2.69.4 3.5 1.95c.76 1.58.5 3.24-.63 3.73s-2.67-.39-3.46-1.96S1.9 8.08 3 7.6m18 0c1.1.48 1.38 2.15.59 3.72s-2.33 2.45-3.46 1.96s-1.39-2.15-.63-3.73C18.31 8 19.86 7.11 21 7.6m-1.67 10.78c.04.94-.68 1.98-1.54 2.37c-1.79.82-3.91-.88-5.9-.88s-4.13 1.77-5.89.88c-1-.49-1.69-1.79-1.56-2.87c.18-1.49 1.97-2.29 3.03-3.38c1.41-1.41 2.41-4.06 4.42-4.06c2 0 3.06 2.61 4.41 4.06c1.11 1.22 2.96 2.25 3.03 3.88\"/>",
+  "food-apple-outline": "<path fill=\"currentColor\" d=\"M20 10a5.27 5.27 0 0 0-7-2V3h-2v5a5.27 5.27 0 0 0-7 2c-2 3 3 12 5 12s2-1 3-1s1 1 3 1s7-9 5-12m-1.75 3.38c-.62 2.47-1.84 4.74-3.55 6.62c-.2 0-.43-.1-.6-.25a3.34 3.34 0 0 0-4.2 0c-.17.15-.4.25-.6.25a15.3 15.3 0 0 1-3.55-6.61c-.25-.73-.3-1.52-.09-2.27A3.37 3.37 0 0 1 8.5 9.4c.56.01 1.11.14 1.61.39l.89.45h2l.89-.45c.5-.25 1.05-.38 1.61-.39c1.18.03 2.26.68 2.84 1.71c.21.75.16 1.54-.09 2.27M11 5C5.38 8.07 4.11 3.78 4.11 3.78S6.77.19 11 5\"/>",
+  "carrot": "<path fill=\"currentColor\" d=\"m16 10l-.2 1h-2.3a.5.5 0 0 0-.5.5a.5.5 0 0 0 .5.5h2.1l-1 5h-2.1a.5.5 0 0 0-.5.5a.5.5 0 0 0 .5.5h1.9l-.4 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2l-1-5h1.5a.5.5 0 0 0 .5-.5a.5.5 0 0 0-.5-.5H8.8L8 10c0-1.2.93-2.23 2.29-2.71L8.9 5.28a.997.997 0 0 1 .26-1.39a1 1 0 0 1 1.39.25l.45.66V3a1 1 0 0 1 1-1a1 1 0 0 1 1 1v2.28l1.5-1.74c.33-.42.97-.47 1.39-.11c.42.35.47.98.11 1.41l-2.13 2.51C15.14 7.85 16 8.85 16 10\"/>",
+  "school-outline": "<path fill=\"currentColor\" d=\"M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9zm6.82 6L12 12.72L5.18 9L12 5.28zM17 16l-5 2.72L7 16v-3.73L12 15l5-2.73z\"/>",
+  "palette-outline": "<path fill=\"currentColor\" d=\"M12 22A10 10 0 0 1 2 12A10 10 0 0 1 12 2c5.5 0 10 4 10 9a6 6 0 0 1-6 6h-1.8c-.3 0-.5.2-.5.5c0 .1.1.2.1.3c.4.5.6 1.1.6 1.7c.1 1.4-1 2.5-2.4 2.5m0-18a8 8 0 0 0-8 8a8 8 0 0 0 8 8c.3 0 .5-.2.5-.5c0-.2-.1-.3-.1-.4c-.4-.5-.6-1-.6-1.6c0-1.4 1.1-2.5 2.5-2.5H16a4 4 0 0 0 4-4c0-3.9-3.6-7-8-7m-5.5 6c.8 0 1.5.7 1.5 1.5S7.3 13 6.5 13S5 12.3 5 11.5S5.7 10 6.5 10m3-4c.8 0 1.5.7 1.5 1.5S10.3 9 9.5 9S8 8.3 8 7.5S8.7 6 9.5 6m5 0c.8 0 1.5.7 1.5 1.5S15.3 9 14.5 9S13 8.3 13 7.5S13.7 6 14.5 6m3 4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5\"/>",
+  "human": "<path fill=\"currentColor\" d=\"M21 9h-6v13h-2v-6h-2v6H9V9H3V7h18m-9-5a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2\"/>",
+  "account-group-outline": "<path fill=\"currentColor\" d=\"M12 5a3.5 3.5 0 0 0-3.5 3.5A3.5 3.5 0 0 0 12 12a3.5 3.5 0 0 0 3.5-3.5A3.5 3.5 0 0 0 12 5m0 2a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 12 10a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 12 7M5.5 8A2.5 2.5 0 0 0 3 10.5c0 .94.53 1.75 1.29 2.18c.36.2.77.32 1.21.32s.85-.12 1.21-.32c.37-.21.68-.51.91-.87A5.42 5.42 0 0 1 6.5 8.5v-.28c-.3-.14-.64-.22-1-.22m13 0c-.36 0-.7.08-1 .22v.28c0 1.2-.39 2.36-1.12 3.31c.12.19.25.34.4.49a2.48 2.48 0 0 0 1.72.7c.44 0 .85-.12 1.21-.32c.76-.43 1.29-1.24 1.29-2.18A2.5 2.5 0 0 0 18.5 8M12 14c-2.34 0-7 1.17-7 3.5V19h14v-1.5c0-2.33-4.66-3.5-7-3.5m-7.29.55C2.78 14.78 0 15.76 0 17.5V19h3v-1.93c0-1.01.69-1.85 1.71-2.52m14.58 0c1.02.67 1.71 1.51 1.71 2.52V19h3v-1.5c0-1.74-2.78-2.72-4.71-2.95M12 16c1.53 0 3.24.5 4.23 1H7.77c.99-.5 2.7-1 4.23-1\"/>",
+  "weather-partly-cloudy": "<path fill=\"currentColor\" d=\"M12.74 5.47c2.36 1.03 3.61 3.56 3.18 5.99A6 6 0 0 1 18 16v.17a3 3 0 0 1 1-.17a3 3 0 0 1 3 3a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4a4 4 0 0 1 4-4h.27C5 12.45 4.6 10.24 5.5 8.26a5.49 5.49 0 0 1 7.24-2.79m-.81 1.83c-1.77-.8-3.84.01-4.62 1.77c-.46 1.02-.38 2.15.1 3.06A5.99 5.99 0 0 1 12 10c.7 0 1.38.12 2 .34a3.51 3.51 0 0 0-2.07-3.04m1.62-3.66c-.55-.24-1.1-.41-1.67-.52l2.49-1.3l.9 2.89a7.7 7.7 0 0 0-1.72-1.07m-7.46.8c-.49.35-.92.75-1.29 1.19l.11-2.81l2.96.68c-.62.21-1.22.53-1.78.94M18 9.71c-.09-.59-.22-1.16-.41-1.71l2.38 1.5l-2.05 2.23c.11-.65.13-1.33.08-2.02M3.04 11.3c.07.6.2 1.17.39 1.7l-2.37-1.5L3.1 9.28c-.1.65-.13 1.33-.06 2.02M19 18h-3v-2a4 4 0 0 0-4-4a4 4 0 0 0-4 4H6a2 2 0 0 0-2 2a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1a1 1 0 0 0-1-1\"/>",
+  "car-outline": "<path fill=\"currentColor\" d=\"M18.9 6c-.2-.6-.8-1-1.4-1h-11c-.7 0-1.2.4-1.4 1L3 12v8c0 .5.5 1 1 1h1c.6 0 1-.5 1-1v-1h12v1c0 .5.5 1 1 1h1c.5 0 1-.5 1-1v-8zM6.8 7h10.3l1.1 3H5.8zM19 17H5v-5h14zM7.5 13c.8 0 1.5.7 1.5 1.5S8.3 16 7.5 16S6 15.3 6 14.5S6.7 13 7.5 13m9 0c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5\"/>",
+};
+
+/* Inline SVG renderer. Accepts both legacy "mdi:foo" and bare "foo" lookup keys. */
+function Iconify({ icon, size = 28, color = 'currentColor', fallback, style = {} }) {
+  const key = (icon || '').replace(/^mdi:/, '');
+  const body = ICONS[key];
+  if (!body) {
+    return <span style={{ fontSize: size * 0.9, color, ...style }}>{fallback || '◇'}</span>;
+  }
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      style={{ color, display: 'inline-block', verticalAlign: 'middle', ...style }}
+      dangerouslySetInnerHTML={{ __html: body }}
+    />
+  );
+}
+
+/* ─────────────────────── OWL MASCOT ─────────────────────── */
+
+function Owl({ size = 120, mood = 'happy', wave = false }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" style={{ overflow: 'visible' }}>
+      <g className={wave ? 'wing-l' : ''}>
+        <ellipse cx="42" cy="115" rx="22" ry="34" fill="#8B5A2B" />
+        <ellipse cx="44" cy="115" rx="14" ry="28" fill="#A67242" />
+      </g>
+      <g className={wave ? 'wing-r' : ''}>
+        <ellipse cx="158" cy="115" rx="22" ry="34" fill="#8B5A2B" />
+        <ellipse cx="156" cy="115" rx="14" ry="28" fill="#A67242" />
+      </g>
+      <ellipse cx="100" cy="125" rx="58" ry="55" fill="#A67242" />
+      <ellipse cx="100" cy="135" rx="42" ry="42" fill="#FFE4C7" />
+      <g opacity="0.4" fill="#D9A56F">
+        <circle cx="85" cy="125" r="6" />
+        <circle cx="100" cy="120" r="6" />
+        <circle cx="115" cy="125" r="6" />
+        <circle cx="92" cy="140" r="6" />
+        <circle cx="108" cy="140" r="6" />
+        <circle cx="100" cy="155" r="6" />
+      </g>
+      <ellipse cx="100" cy="80" rx="62" ry="58" fill="#A67242" />
+      <path d="M 50 35 L 60 55 L 70 40 Z" fill="#8B5A2B" />
+      <path d="M 150 35 L 140 55 L 130 40 Z" fill="#8B5A2B" />
+      <ellipse cx="100" cy="85" rx="50" ry="46" fill="#FFE4C7" />
+      <circle cx="78" cy="78" r="20" fill="#fff" stroke="#2A1810" strokeWidth="3" />
+      <circle cx="122" cy="78" r="20" fill="#fff" stroke="#2A1810" strokeWidth="3" />
+      {mood === 'sleepy' ? (
+        <>
+          <path d="M 65 78 Q 78 84 91 78" stroke="#2A1810" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+          <path d="M 109 78 Q 122 84 135 78" stroke="#2A1810" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <circle className="owl-eye" cx="78" cy="80" r="11" fill="#2A1810" />
+          <circle className="owl-eye" cx="122" cy="80" r="11" fill="#2A1810" />
+          <circle cx="82" cy="76" r="3.5" fill="#fff" />
+          <circle cx="126" cy="76" r="3.5" fill="#fff" />
+        </>
+      )}
+      <path d="M 100 92 L 92 108 Q 100 113 108 108 Z" fill="#FF9933" stroke="#2A1810" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx="62" cy="100" r="7" fill="#FF6F91" opacity="0.5" />
+      <circle cx="138" cy="100" r="7" fill="#FF6F91" opacity="0.5" />
+      {mood === 'reading' && (
+        <g>
+          <rect x="60" y="22" width="80" height="8" fill="#2A1810" />
+          <path d="M 100 18 L 152 28 L 100 38 L 48 28 Z" fill="#2A1810" />
+          <circle cx="152" cy="28" r="4" fill="#FFD43B" />
+          <path d="M 152 28 L 158 44" stroke="#FFD43B" strokeWidth="2.5" />
+          <circle cx="158" cy="46" r="3" fill="#FFD43B" />
+        </g>
+      )}
+      {mood === 'cheering' && (
+        <>
+          <text x="35" y="45" fontSize="22">✨</text>
+          <text x="145" y="45" fontSize="22">✨</text>
+        </>
+      )}
+    </svg>
+  );
+}
+
+/* ─────────────────────── DESIGN-SYSTEM COMPONENTS ───────────────────────
+   ScreenHeader and Card centralize patterns that were previously inlined
+   in 8+ places with subtle drift. Use these for any new screen.
+*/
+
+// Standard top-of-screen header: back chevron · stacked Gujarati/English
+// title · optional right slot (icon, owl, status chip, etc.)
+function ScreenHeader({ onBack, gu, en, right, lang = 'both', tone = 'default' }) {
+  // tone="default" (transparent) or tone="<color-name>" for a tinted strip
+  const toneBg = ({
+    saffron: 'var(--saffron-soft)',
+    green:   'var(--green-soft)',
+    pink:    'var(--pink-soft)',
+    purple:  'var(--purple-soft)',
+    sky:     'var(--sky-soft)',
+    yellow:  'var(--yellow-soft)',
+  })[tone];
+
+  const showGu = lang !== 'en';
+  const showEn = lang !== 'gu';
+
+  return (
+    <div className="gs-header" style={{ background: toneBg || 'transparent' }}>
+      {onBack && (
+        <button onClick={onBack} className="press gs-icon-btn"
+                aria-label={lang === 'en' ? 'Back' : 'પાછળ'}>
+          <Icon.Back size={22} color="var(--ink)" />
+        </button>
+      )}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {showGu && <div className="gs-h1">{gu}</div>}
+        {showEn && (
+          <div className="gs-muted" style={{ marginTop: showGu ? 2 : 0 }}>
+            {en}
+          </div>
+        )}
+      </div>
+      {right}
+    </div>
+  );
+}
+
+/* ─────────────────────── PHONE FRAME ─────────────────────── */
+
+function Phone({ children, screenKey }) {
+  return (
+    <div className="gs-phone">
+      <div className="gs-phone-screen">
+        <div className="gs-notch" />
+        <div className="gs-status">
+          <span>9:30</span>
+          <div className="gs-status-icons">
+            <span style={{ fontSize: 11, fontWeight: 700, opacity: 0.7 }}>4G</span>
+            <Icon.Wifi />
+            <Icon.Battery />
+          </div>
+        </div>
+        <div key={screenKey} className="screen-in"
+             style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+          {children}
+        </div>
+        <div className="gs-home-bar" />
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── SPLASH + LOADING ─────────────────────── */
+
+function SplashScreen({ onContinue }) {
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(160deg, #FFB85C 0%, #FF9933 50%, #F37820 100%)',
+      position: 'relative', overflow: 'hidden', padding: '24px',
+    }}>
+      <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.15)' }} />
+      <div style={{ position: 'absolute', bottom: 80, left: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+      <div style={{ position: 'absolute', top: 100, left: 30, fontSize: 24 }}>✨</div>
+      <div style={{ position: 'absolute', top: 160, right: 50, fontSize: 18 }}>⭐</div>
+      <div style={{ position: 'absolute', bottom: 200, right: 30, fontSize: 22 }}>✨</div>
+
+      <div className="bobbing">
+        <Owl size={180} mood="reading" wave={true} />
+      </div>
+
+      <div className="pop-in" style={{ marginTop: 24, textAlign: 'center' }}>
+        <div style={{
+          fontSize: 56, fontWeight: 800, color: '#fff', lineHeight: 1,
+          textShadow: '0 4px 0 rgba(0,0,0,0.15)',
+        }}>જ્ઞાનસેતુ</div>
+        <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginTop: 4, letterSpacing: '0.04em' }}>
+          GyanSetu
+        </div>
+        <div style={{
+          marginTop: 14, fontSize: 15, fontWeight: 700,
+          color: '#fff', background: 'rgba(0,0,0,0.18)',
+          padding: '7px 16px', borderRadius: 20, display: 'inline-block',
+          whiteSpace: 'nowrap',
+        }}>તમારો શીખવાનો સાથી · Your Learning Friend</div>
+      </div>
+
+      <button onClick={onContinue} className="btn-chunky press" style={{
+        marginTop: 50, padding: '16px 32px',
+        background: '#fff', color: 'var(--saffron-deep)',
+        fontSize: 18, fontWeight: 800, whiteSpace: 'nowrap',
+      }}>ચાલો શરૂ કરીએ! · Let's Start!</button>
+
+      <div style={{ position: 'absolute', bottom: 40, color: '#fff', opacity: 0.85, fontSize: 13, fontWeight: 600 }}>
+        સંપૂર્ણ ઑફલાઇન · Works Offline
+      </div>
+    </div>
+  );
+}
+
+function LoadingScreen({ onReady }) {
+  const [progress, setProgress] = useState(0);
+  const [stage, setStage] = useState(0);
+
+  const stages = [
+    { gu: 'મોડેલ તૈયાર કરી રહ્યું છે...', en: 'Preparing model...' },
+    { gu: 'ગુજરાતી શીખવી રહ્યું છે...', en: 'Learning Gujarati...' },
+    { gu: 'ચિત્રો યાદ રાખી રહ્યું છે...', en: 'Remembering pictures...' },
+    { gu: 'લગભગ થઈ ગયું!', en: 'Almost ready!' },
+  ];
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setProgress(p => {
+        if (p >= 100) { clearInterval(t); setTimeout(onReady, 600); return 100; }
+        return p + 1.4;
+      });
+    }, 50);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    setStage(Math.min(stages.length - 1, Math.floor(progress / 25)));
+  }, [progress]);
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: 'var(--bg)', padding: 28,
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.06 }} viewBox="0 0 380 700">
+        <text x="50" y="200" fontSize="80" fill="#FF9933">ક</text>
+        <text x="280" y="180" fontSize="70" fill="#138808">ગ</text>
+        <text x="40" y="450" fontSize="90" fill="#9C6ADE">A</text>
+        <text x="290" y="500" fontSize="80" fill="#FF6F91">ક</text>
+        <text x="160" y="650" fontSize="70" fill="#4FC3F7">B</text>
+      </svg>
+
+      <div className="bobbing"><Owl size={140} mood="thinking" /></div>
+
+      <div style={{ marginTop: 24, fontSize: 32, fontWeight: 700, color: 'var(--ink)', textAlign: 'center', lineHeight: 1.1 }}>
+        જ્ઞાન<span style={{ color: 'var(--saffron-deep)' }}>સેતુ</span>
+      </div>
+      <div style={{ fontSize: 14, color: 'var(--ink-soft)', fontWeight: 600, marginTop: 2 }}>
+        Loading offline brain...
+      </div>
+
+      <div style={{
+        marginTop: 36, width: '85%',
+        height: 22, borderRadius: 999,
+        background: '#fff', border: '3px solid var(--ink)',
+        boxShadow: '0 4px 0 var(--ink)',
+        overflow: 'hidden', position: 'relative',
+      }}>
+        <div style={{
+          width: `${progress}%`, height: '100%',
+          background: 'linear-gradient(90deg, #FFD43B 0%, #FF9933 50%, #138808 100%)',
+          borderRadius: 999, transition: 'width 0.1s linear',
+        }} />
+      </div>
+
+      <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div className="ring-spinner" />
+        <div style={{
+          fontSize: 24, fontWeight: 800, color: 'var(--saffron-deep)',
+          fontVariantNumeric: 'tabular-nums',
+        }}>{Math.floor(progress)}%</div>
+      </div>
+
+      <div style={{ marginTop: 16, textAlign: 'center', minHeight: 50 }} key={stage} className="fade-in">
+        <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)' }}>{stages[stage].gu}</div>
+        <div style={{ fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600 }}>{stages[stage].en}</div>
+      </div>
+
+      <div style={{
+        position: 'absolute', bottom: 32, left: 28, right: 28,
+        background: 'var(--green-soft)', borderRadius: 16,
+        padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 10,
+        border: '2px solid var(--green)',
+      }}>
+        <div style={{ fontSize: 22 }}>📵</div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-deep)', lineHeight: 1.25 }}>
+          ઇન્ટરનેટ વગર ચાલે છે · No internet needed
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── HOME ─────────────────────── */
+
+function HomeScreen({ onNavigate, lang, setLang, studentName, stars, streak = 0 }) {
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return { gu: 'સુપ્રભાત', en: 'Good morning' };
+    if (h < 17) return { gu: 'નમસ્તે', en: 'Hello' };
+    return { gu: 'શુભ સાંજ', en: 'Good evening' };
+  })();
+
+  const tiles = [
+    {
+      id: 'scan', gu: 'ફોટો જુઓ', en: 'Camera Scan',
+      bg: 'linear-gradient(140deg, #FFB85C, #F37820)',
+      iconColor: '#F37820', mdi: 'mdi:camera-outline', emoji: '📷',
+    },
+    {
+      id: 'ask', gu: 'પ્રશ્ન પૂછો', en: 'Ask Question',
+      bg: 'linear-gradient(140deg, #6BD662, #138808)',
+      iconColor: '#0E6606', mdi: 'mdi:comment-question-outline', emoji: '❓',
+    },
+    {
+      id: 'topics', gu: 'વિષયો', en: 'Topics',
+      bg: 'linear-gradient(140deg, #4FC3F7, #0288D1)',
+      iconColor: '#0288D1', mdi: 'mdi:book-open-page-variant-outline', emoji: '📚',
+    },
+    {
+      id: 'match', gu: 'જોડી મેળવો', en: 'Match Game',
+      bg: 'linear-gradient(140deg, #FF9F80, #D85A3A)',
+      iconColor: '#D85A3A', mdi: 'mdi:puzzle-outline', emoji: '🧩',
+    },
+    {
+      id: 'quiz', gu: 'જ્ઞાન રમત', en: 'GK Quiz',
+      bg: 'linear-gradient(140deg, #B58CF0, #9C6ADE)',
+      iconColor: '#6E3FAB', mdi: 'mdi:trophy-variant-outline', emoji: '🏆',
+    },
+  ];
+
+  return (
+    <div className="gs-screen" style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'var(--bg)',
+      padding: 'var(--sp-4) var(--sp-5) var(--sp-5)',
+      // Allow vertical scroll on short viewports (e.g. 320×568) where the
+      // Word-of-the-day card pushes the home content beyond the screen.
+      overflowY: 'auto', overflowX: 'hidden',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+        <button onClick={() => onNavigate('dashboard')} className="press" style={{
+          width: 44, height: 44, borderRadius: 22,
+          background: '#fff', border: '2.5px solid var(--ink)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 3px 0 var(--ink)',
+        }}>
+          <Icon.User size={22} color="var(--ink)" />
+        </button>
+
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 7,
+          background: '#fff', borderRadius: 999,
+          padding: '7px 13px',
+          border: '2.5px solid var(--green)',
+          boxShadow: '0 3px 0 var(--green-deep)',
+        }}>
+          <div className="pulse-dot" style={{
+            width: 10, height: 10, borderRadius: 5, background: 'var(--green)',
+          }} />
+          <Bi mode={lang} gu="તૈયાર" en="Ready" inline
+              style={{ fontSize: 13, fontWeight: 700, color: 'var(--green-deep)' }} />
+        </div>
+
+        <button onClick={() => onNavigate('settings')} className="press" style={{
+          width: 44, height: 44, borderRadius: 22,
+          background: '#fff', border: '2.5px solid var(--ink)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 3px 0 var(--ink)',
+        }}>
+          <Icon.Settings size={22} color="var(--ink)" />
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, marginBottom: 14 }}>
+        <div className="bobbing"><Owl size={84} mood="happy" /></div>
+        <div style={{ flex: 1, paddingBottom: 6 }}>
+          <div style={{ fontSize: 14, color: 'var(--ink-soft)', fontWeight: 600 }}>
+            {lang === 'en' ? greeting.en : greeting.gu}{lang === 'both' ? ` · ${greeting.en}` : ''}
+          </div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.1 }}>
+            {studentName}!
+          </div>
+          <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              padding: '3px 10px',
+              background: 'var(--yellow-soft)', borderRadius: 999,
+              border: '1.5px solid var(--yellow)',
+            }}>
+              <Icon.Star size={13} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>
+                {stars} {lang === 'en' ? 'stars' : 'તારા'}
+              </span>
+            </div>
+            {streak >= 2 && (
+              <div className="pop-in" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 4,
+                padding: '3px 10px',
+                background: 'var(--pink-soft)', borderRadius: 999,
+                border: '1.5px solid var(--pink)',
+              }}>
+                <span style={{ fontSize: 13 }}>🔥</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--pink-deep)' }}>
+                  {streak} {lang === 'en' ? 'streak' : 'સળંગ'}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        display: 'flex', background: '#fff',
+        borderRadius: 999, padding: 4,
+        border: '2.5px solid var(--ink)',
+        boxShadow: '0 3px 0 var(--ink)',
+        marginBottom: 16,
+      }}>
+        {[
+          { id: 'gu', label: 'ગુજરાતી' },
+          { id: 'both', label: 'બન્ને · Both' },
+          { id: 'en', label: 'English' },
+        ].map(opt => (
+          <button key={opt.id} onClick={() => setLang(opt.id)} style={{
+            flex: 1, padding: '11px 6px', minHeight: 40, borderRadius: 999,
+            background: lang === opt.id ? 'var(--saffron)' : 'transparent',
+            color: lang === opt.id ? 'var(--text-inverse)' : 'var(--text-primary)',
+            fontSize: 'var(--fs-md)', fontWeight: 700, transition: 'all 0.2s',
+          }}>{opt.label}</button>
+        ))}
+      </div>
+
+      {/* Hero row: scan + ask side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+        {tiles.slice(0, 2).map((t, i) => (
+          <button key={t.id} onClick={() => onNavigate(t.id)} className="press btn-chunky stagger-in" style={{
+            background: t.bg, color: '#fff',
+            padding: '14px 12px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+            textAlign: 'center', minHeight: 110,
+            animationDelay: `${i * 70}ms`,
+          }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: 16,
+              background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '2.5px solid var(--ink)', flexShrink: 0,
+            }}>
+              <Iconify icon={t.mdi} size={36} color={t.iconColor} fallback={t.emoji} />
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 800, lineHeight: 1.1, textShadow: '0 1.5px 0 rgba(0,0,0,0.15)' }}>
+              {lang === 'en' ? t.en : t.gu}
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Secondary row: topics + match + quiz — fixed height, doesn't stretch */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+        {tiles.slice(2).map((t, i) => (
+          <button key={t.id} onClick={() => onNavigate(t.id)} className="press btn-chunky stagger-in" style={{
+            background: t.bg, color: '#fff',
+            padding: '12px 6px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+            textAlign: 'center', height: 110,
+            animationDelay: `${140 + i * 70}ms`,
+          }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: 12,
+              background: 'rgba(255,255,255,0.95)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '2px solid var(--ink)',
+              flexShrink: 0,
+            }}>
+              <Iconify icon={t.mdi} size={28} color={t.iconColor} fallback={t.emoji} />
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 800, lineHeight: 1.1, textShadow: '0 1.5px 0 rgba(0,0,0,0.15)' }}>
+              {lang === 'en' ? t.en : t.gu}
+            </div>
+          </button>
+        ))}
+      </div>
+      {/* Streak + tip strip — sits directly below the tile grid */}
+      <div style={{
+        marginTop: 12, display: 'flex', gap: 8,
+      }}>
+        <div style={{
+          flex: 1, padding: '10px 12px',
+          background: 'var(--saffron-soft)', borderRadius: 14,
+          display: 'flex', alignItems: 'center', gap: 8,
+          border: '1.5px solid var(--saffron)',
+        }}>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>💡</span>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.25 }}>
+            આજે કંઈક નવું શીખો! · Learn something new today!
+          </span>
+        </div>
+      </div>
+
+      {/* Daily-word card fills the empty space below the tip with something useful */}
+      <div style={{
+        marginTop: 10, flex: 1, minHeight: 0,
+        background: '#fff', borderRadius: 22,
+        border: '2.5px solid var(--ink)',
+        boxShadow: '0 4px 0 var(--ink)',
+        padding: '12px 14px',
+        display: 'flex', alignItems: 'center', gap: 12,
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          width: 64, height: 64, borderRadius: 16, flexShrink: 0,
+          background: 'var(--yellow-soft)', border: '2px solid var(--yellow)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 38, lineHeight: 1,
+        }}>🦚</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.12em',
+                        color: 'var(--saffron-deep)', textTransform: 'uppercase' }}>
+            આજનો શબ્દ · Word of the day
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.1, marginTop: 2 }}>
+            મોર <span style={{ color: 'var(--ink-soft)', fontWeight: 700, fontSize: 15 }}>· Peacock</span>
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink-soft)', marginTop: 2, lineHeight: 1.25 }}>
+            ભારતનું રાષ્ટ્રીય પક્ષી · India's national bird
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── CAMERA SCAN ───────────────────────
+   Real getUserMedia stream as the viewfinder. Capture grabs a frame
+   into a canvas (used as the result thumbnail). Recognition is mocked
+   per the user's instruction in chat1.md but cycles through the KB.
+*/
+function CameraScanScreen({ onBack, lang }) {
+  const [phase, setPhase] = useState('viewfinder'); // viewfinder | scanning | result
+  const [resultIdx, setResultIdx] = useState(0);
+  const [thumb, setThumb] = useState(null);
+  const { videoRef, state: camState } = useCamera(phase !== 'result');
+  const tts = useTTS();
+
+  const items = [...KB.animals, ...KB.fruits, ...KB.classroom];
+  const item = items[resultIdx];
+
+  const capture = () => {
+    if (videoRef.current && camState === 'live') {
+      try {
+        const v = videoRef.current;
+        const canvas = document.createElement('canvas');
+        const w = v.videoWidth || 320, h = v.videoHeight || 240;
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(v, 0, 0, w, h);
+        setThumb(canvas.toDataURL('image/jpeg', 0.7));
+      } catch {}
+    }
+    setPhase('scanning');
+    setTimeout(() => setPhase('result'), 1400);
+  };
+
+  const reset = () => {
+    setResultIdx((resultIdx + 1) % items.length);
+    setThumb(null);
+    setPhase('viewfinder');
+  };
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: '#1a1a1a', position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{ position: 'absolute', inset: 0 }}>
+        {camState === 'live' ? (
+          <video ref={videoRef} autoPlay playsInline muted style={{
+            width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+          }} />
+        ) : (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse at 50% 55%, #6b8456 0%, #3d5238 45%, #1f2d1c 100%)',
+          }}>
+            <svg width="100%" height="100%" viewBox="0 0 380 700" style={{ position: 'absolute', inset: 0, opacity: 0.4 }}>
+              {Array.from({ length: 40 }).map((_, i) => (
+                <line key={i}
+                  x1={(i * 31) % 380} y1={500 + (i * 17) % 200}
+                  x2={(i * 47) % 380} y2={520 + (i * 23) % 200}
+                  stroke="#2a3a23" strokeWidth="2" />
+              ))}
+            </svg>
+            <div style={{
+              position: 'absolute', left: '50%', top: '50%',
+              transform: 'translate(-50%, -50%)',
+              fontSize: 80, opacity: 0.85,
+            }}>{item.icon || '📷'}</div>
+            <div style={{
+              position: 'absolute', bottom: 110, left: 0, right: 0,
+              textAlign: 'center', color: '#fff', fontSize: 13, fontWeight: 600,
+              opacity: 0.85, padding: '0 32px',
+            }}>
+              {camState === 'denied'
+                ? '⚠️ Camera permission denied · ડેમો મોડ'
+                : camState === 'unsupported'
+                ? 'Camera not supported · ડેમો મોડ'
+                : '...' }
+            </div>
+            <div style={{
+              position: 'absolute', inset: 0, opacity: 0.18,
+              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
+              backgroundSize: '4px 4px',
+            }} />
+          </div>
+        )}
+        {/* dark overlay for legibility */}
+        {camState === 'live' && (
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.35) 100%)' }} />
+        )}
+      </div>
+
+      <div style={{
+        position: 'relative', zIndex: 5,
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '14px 16px',
+      }}>
+        <button onClick={onBack} className="press" style={{
+          width: 44, height: 44, borderRadius: 22,
+          background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: '1.5px solid rgba(255,255,255,0.3)',
+        }}>
+          <Icon.Back size={22} color="#fff" />
+        </button>
+        <div style={{
+          background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)',
+          padding: '8px 16px', borderRadius: 999,
+          color: '#fff', fontSize: 14, fontWeight: 700,
+          border: '1.5px solid rgba(255,255,255,0.3)',
+        }}>
+          {lang === 'en' ? 'Point at object' : 'વસ્તુ પર નિશાન રાખો'}
+        </div>
+        <div style={{ width: 44 }} />
+      </div>
+
+      {phase !== 'result' && (
+        <div style={{
+          position: 'absolute', left: 32, right: 32, top: 110, bottom: 220,
+          pointerEvents: 'none',
+        }}>
+          {[
+            { top: 0, left: 0, b: ['top', 'left'] },
+            { top: 0, right: 0, b: ['top', 'right'] },
+            { bottom: 0, left: 0, b: ['bottom', 'left'] },
+            { bottom: 0, right: 0, b: ['bottom', 'right'] },
+          ].map((c, i) => (
+            <div key={i} style={{
+              position: 'absolute', ...c, width: 36, height: 36,
+              borderTop: c.b.includes('top') ? '4px solid #FFD43B' : 'none',
+              borderBottom: c.b.includes('bottom') ? '4px solid #FFD43B' : 'none',
+              borderLeft: c.b.includes('left') ? '4px solid #FFD43B' : 'none',
+              borderRight: c.b.includes('right') ? '4px solid #FFD43B' : 'none',
+              borderRadius: 6,
+            }} />
+          ))}
+          {phase === 'scanning' && (
+            <div className="scan-line" style={{
+              position: 'absolute', left: 0, right: 0, height: 3,
+              background: 'linear-gradient(90deg, transparent, #FFD43B, transparent)',
+              boxShadow: '0 0 12px #FFD43B',
+            }} />
+          )}
+        </div>
+      )}
+
+      {phase === 'scanning' && (
+        <div style={{
+          position: 'absolute', left: '50%', top: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)',
+          padding: '14px 22px', borderRadius: 16,
+          color: '#fff', fontSize: 16, fontWeight: 700,
+          textAlign: 'center', zIndex: 10,
+        }}>
+          🔍 ઓળખી રહ્યું છે...<br/>
+          <span style={{ fontSize: 13, opacity: 0.85 }}>Recognizing...</span>
+        </div>
+      )}
+
+      {phase === 'viewfinder' && (
+        <div style={{
+          position: 'absolute', bottom: 32, left: 0, right: 0,
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          gap: 28, zIndex: 5,
+        }}>
+          <div style={{ width: 50 }} />
+          <button onClick={capture} className="press" style={{
+            width: 88, height: 88, borderRadius: 44,
+            background: '#fff', border: '5px solid rgba(255,255,255,0.4)',
+            outline: '4px solid #fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: 32,
+              background: 'var(--saffron)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Icon.Camera size={32} color="#fff" />
+            </div>
+          </button>
+          <div style={{ width: 50 }} />
+        </div>
+      )}
+
+      {phase === 'result' && (
+        <div className="slide-up" style={{
+          position: 'absolute', left: 0, right: 0, bottom: 0,
+          background: '#fff',
+          borderTopLeftRadius: 28, borderTopRightRadius: 28,
+          padding: '18px 18px 22px',
+          boxShadow: '0 -10px 30px rgba(0,0,0,0.3)',
+          zIndex: 8,
+          maxHeight: '78%', overflowY: 'auto',
+        }}>
+          <div style={{
+            width: 40, height: 4, borderRadius: 2,
+            background: 'rgba(0,0,0,0.15)', margin: '0 auto 12px',
+          }} />
+
+          <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+            <div style={{
+              width: 88, height: 88, borderRadius: 18,
+              background: thumb ? `center/cover no-repeat url(${thumb})` : 'linear-gradient(160deg, #f5f0e8, #d4c5a8)',
+              border: '2.5px solid var(--ink)',
+              boxShadow: '0 3px 0 var(--ink)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, overflow: 'hidden', fontSize: 50,
+            }}>
+              {!thumb && (item.icon || '📷')}
+            </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+                color: 'var(--green-deep)', textTransform: 'uppercase',
+                background: 'var(--green-soft)',
+                padding: '3px 8px', borderRadius: 6,
+                display: 'inline-block', marginBottom: 6,
+              }}>
+                ✓ {lang === 'en' ? 'Recognized' : 'મળી ગયું'}
+              </div>
+              <div style={{ fontSize: 36, fontWeight: 800, color: 'var(--ink)', lineHeight: 1, letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+                {item.en}
+              </div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--saffron-deep)', lineHeight: 1.1, marginTop: 2 }}>
+                {item.gu}
+              </div>
+              <div style={{
+                marginTop: 6, fontSize: 14, fontWeight: 600,
+                color: 'var(--ink-soft)', fontFamily: 'monospace',
+              }}>
+                {item.phon}
+              </div>
+            </div>
+
+            <button
+              onClick={() => tts.speakBilingual(item.gu, item.en)}
+              className="press" style={{
+              width: 52, height: 52, borderRadius: 26,
+              background: tts.speaking ? 'var(--saffron)' : '#fff',
+              border: '2.5px solid var(--ink)',
+              boxShadow: '0 3px 0 var(--ink)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              transform: tts.speaking ? 'scale(1.06)' : 'scale(1)',
+              transition: 'all 0.15s',
+            }}>
+              <Icon.Speaker size={26} color={tts.speaking ? '#fff' : 'var(--saffron-deep)'} />
+            </button>
+          </div>
+
+          <div style={{
+            marginTop: 14, padding: 14,
+            background: 'var(--yellow-soft)', borderRadius: 16,
+            border: '2px dashed var(--yellow)',
+          }}>
+            <div style={{
+              fontSize: 11, fontWeight: 800, letterSpacing: '0.1em',
+              color: 'var(--ink-soft)', textTransform: 'uppercase',
+              marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5,
+            }}>📖 વાર્તા · Story</div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)', lineHeight: 1.35 }}>
+              {item.story_gu}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink-soft)', lineHeight: 1.35, marginTop: 3 }}>
+              {item.story_en}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+            <button onClick={reset} className="press btn-chunky" style={{
+              flex: 1, padding: '12px',
+              background: '#fff', color: 'var(--ink)',
+              fontSize: 15, fontWeight: 700,
+            }}>📷 {lang === 'en' ? 'Scan again' : 'ફરી જુઓ'}</button>
+            <button
+              onClick={() => tts.speakBilingual(item.story_gu, item.story_en)}
+              className="press btn-chunky" style={{
+              flex: 1, padding: '12px',
+              background: 'var(--green)', color: '#fff',
+              fontSize: 15, fontWeight: 700,
+            }}>🔊 {lang === 'en' ? 'Listen' : 'સાંભળો'}</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────── ASK QUESTION ─────────────────────── */
+
+function AskScreen({ onBack, lang }) {
+  const [input, setInput] = useState('');
+  const [recording, setRecording] = useState(false);
+  const [phase, setPhase] = useState('input');
+  const [questionAsked, setQuestionAsked] = useState(null);
+  const [answer, setAnswer] = useState({ gu: '', en: '' });
+  const tts = useTTS();
+  const recogRef = useRef(null);
+
+  const presetQuestions = [
+    { gu: 'આકાશ વાદળી કેમ છે?', en: 'Why is the sky blue?' },
+    { gu: 'સૂર્ય શું છે?', en: 'What is the sun?' },
+    { gu: 'મેઘધનુષ કેવી રીતે બને?', en: 'How does a rainbow form?' },
+  ];
+
+  const ask = (q) => {
+    setQuestionAsked(q);
+    setPhase('thinking');
+    setTimeout(() => {
+      const looked = ragLookup(q.en) || ragLookup(q.gu);
+      if (looked) {
+        setAnswer(looked);
+      } else {
+        setAnswer({
+          gu: 'સારો પ્રશ્ન! હું હજુ આ વિશે શીખી રહી છું. તારા શિક્ષકને પૂછી જો.',
+          en: 'Great question! I am still learning about that. Ask your teacher!',
+        });
+      }
+      setPhase('answer');
+    }, 1400);
+  };
+
+  const reset = () => {
+    setPhase('input');
+    setInput('');
+    setQuestionAsked(null);
+  };
+
+  // Web Speech API recognition (when supported)
+  const toggleRecord = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      // No speech recognition — fall back to a friendly preset
+      if (recording) {
+        setRecording(false);
+        return;
+      }
+      setRecording(true);
+      setTimeout(() => {
+        setRecording(false);
+        ask({ gu: 'આકાશ વાદળી કેમ છે?', en: 'Why is the sky blue?' });
+      }, 1800);
+      return;
+    }
+    if (recording && recogRef.current) {
+      recogRef.current.stop();
+      return;
+    }
+    const r = new SR();
+    r.lang = lang === 'en' ? 'en-IN' : 'gu-IN';
+    r.continuous = false;
+    r.interimResults = false;
+    r.onresult = (ev) => {
+      const text = ev.results[0][0].transcript;
+      ask({ gu: text, en: text });
+    };
+    r.onend = () => { setRecording(false); recogRef.current = null; };
+    r.onerror = () => { setRecording(false); recogRef.current = null; };
+    recogRef.current = r;
+    setRecording(true);
+    try { r.start(); } catch { setRecording(false); }
+  };
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'linear-gradient(180deg, #E8F8E5 0%, #FFFAF2 30%)',
+      overflow: 'hidden',
+    }}>
+      <ScreenHeader
+        onBack={onBack}
+        gu="પ્રશ્ન પૂછો"
+        en="Ask a Question"
+        lang={lang}
+        right={<Owl size={48} mood="thinking" />}
+      />
+
+      <div style={{ flex: 1, padding: '4px 16px 12px', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        {phase === 'input' && (
+          <>
+            <div className="fade-in" style={{
+              background: '#fff', borderRadius: 20,
+              border: '2.5px solid var(--green)',
+              padding: '14px 16px', marginBottom: 16,
+            }}>
+              <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.3 }}>
+                મને કંઈપણ પૂછો!
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)', marginTop: 2 }}>
+                Ask me anything!
+              </div>
+            </div>
+
+            <div style={{
+              fontSize: 11, fontWeight: 800, letterSpacing: '0.08em',
+              color: 'var(--ink-soft)', textTransform: 'uppercase',
+              marginBottom: 8,
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <span style={{ fontSize: 14, lineHeight: 1, letterSpacing: 0 }}>💭</span>
+              <span>સૂચનો · Try these</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+              {presetQuestions.map((q, i) => (
+                <button key={i} onClick={() => ask(q)} className="press" style={{
+                  background: '#fff', border: '2px solid var(--line)',
+                  borderRadius: 16, padding: '12px 14px',
+                  textAlign: 'left',
+                  display: 'flex', alignItems: 'center', gap: 10,
+                }}>
+                  <div style={{ fontSize: 22 }}>{['🌤️', '☀️', '🌈'][i]}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2 }}>
+                      {q.gu}
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-soft)', marginTop: 1 }}>
+                      {q.en}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 18, color: 'var(--ink-soft)' }}>›</div>
+                </button>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 'auto' }}>
+              <div className="ask-input" style={{
+                background: '#fff', borderRadius: 22,
+                border: '2.5px solid var(--ink)',
+                boxShadow: '0 4px 0 var(--ink)',
+                padding: '4px 4px 4px 16px',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  placeholder="અહીં લખો... · Type here..."
+                  style={{
+                    flex: 1, border: 'none', outline: 'none',
+                    fontSize: 16, fontWeight: 600,
+                    fontFamily: 'inherit', color: 'var(--ink)',
+                    padding: '12px 0', background: 'transparent', minWidth: 0,
+                  }}
+                  onKeyDown={e => e.key === 'Enter' && input.trim() && ask({ gu: input, en: input })}
+                />
+                {input.trim() ? (
+                  <button onClick={() => ask({ gu: input, en: input })} className="press" style={{
+                    width: 44, height: 44, borderRadius: 22,
+                    background: 'var(--green)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Icon.Send size={22} color="#fff" />
+                  </button>
+                ) : (
+                  <button onClick={toggleRecord} className={recording ? 'mic-recording' : ''} style={{
+                    width: 44, height: 44, borderRadius: 22,
+                    background: recording ? 'var(--pink)' : 'var(--saffron)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Icon.Mic size={22} color="#fff" />
+                  </button>
+                )}
+              </div>
+              <div style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: 'var(--ink-soft)', marginTop: 8 }}>
+                {recording ? '🔴 સાંભળી રહ્યું છે... · Listening...' : 'માઇક દબાવો અથવા લખો · Tap mic or type'}
+              </div>
+            </div>
+          </>
+        )}
+
+        {phase === 'thinking' && (
+          <div style={{
+            flex: 1, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: 16,
+          }}>
+            <div className="bobbing"><Owl size={120} mood="thinking" /></div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)' }}>
+              વિચારી રહ્યું છું...
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--ink-soft)', fontWeight: 600 }}>
+              Thinking...
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{
+                  width: 10, height: 10, borderRadius: 5,
+                  background: 'var(--saffron)',
+                  animation: `bob 0.9s ease-in-out ${i * 0.15}s infinite`,
+                }} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {phase === 'answer' && (
+          <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ alignSelf: 'flex-end', maxWidth: '85%' }}>
+              <div style={{
+                background: 'var(--saffron)', color: '#fff',
+                borderRadius: '20px 20px 4px 20px',
+                padding: '10px 14px',
+                fontSize: 15, fontWeight: 700,
+                boxShadow: '0 2px 0 var(--saffron-deep)',
+              }}>{questionAsked.gu}</div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+              <Owl size={48} mood="happy" />
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  background: '#fff',
+                  borderRadius: '20px 20px 20px 4px',
+                  border: '2.5px solid var(--green)',
+                  padding: '14px 16px',
+                  boxShadow: '0 3px 0 var(--green-deep)',
+                }}>
+                  <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>
+                    {answer.gu}
+                  </div>
+                  <div style={{
+                    marginTop: 8, paddingTop: 8,
+                    borderTop: '1.5px dashed var(--line)',
+                    fontSize: 13, fontWeight: 500, color: 'var(--ink-soft)', lineHeight: 1.4,
+                  }}>{answer.en}</div>
+                  <button
+                    onClick={() => tts.speakBilingual(answer.gu, answer.en)}
+                    className="press" style={{
+                    marginTop: 10, padding: '6px 10px',
+                    background: 'var(--green-soft)', borderRadius: 12,
+                    border: '1.5px solid var(--green)',
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                  }}>
+                    <Icon.Speaker size={16} color="var(--green-deep)" />
+                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green-deep)' }}>
+                      {tts.speaking ? '⏸ બંધ · Stop' : 'સાંભળો · Listen'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <button onClick={reset} className="press btn-chunky" style={{
+                flex: 1, padding: '12px',
+                background: 'var(--purple)', color: '#fff',
+                fontSize: 14, fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              }}>
+                <span style={{ fontSize: 16, lineHeight: 1 }}>✨</span>
+                <span>બીજો પ્રશ્ન · Ask another</span>
+              </button>
+              <button onClick={reset} className="press btn-chunky" style={{
+                padding: '12px 16px',
+                background: '#fff', color: 'var(--ink)',
+                fontSize: 14, fontWeight: 700,
+              }}>↻</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── TOPICS BROWSE ─────────────────────── */
+
+const TOPIC_META = [
+  { id: 'animals',    gu: 'પ્રાણીઓ',     en: 'Animals',     mdi: 'mdi:paw',                       icon: '🐾', color: '#FFB85C', deep: '#F37820' },
+  { id: 'fruits',     gu: 'ફળો',          en: 'Fruits',     mdi: 'mdi:food-apple-outline',         icon: '🍎', color: '#FF6F91', deep: '#D14570' },
+  { id: 'vegetables', gu: 'શાકભાજી',     en: 'Vegetables', mdi: 'mdi:carrot',                     icon: '🥕', color: '#6BD662', deep: '#138808' },
+  { id: 'classroom',  gu: 'વર્ગ',         en: 'Classroom',  mdi: 'mdi:school-outline',             icon: '📚', color: '#9C6ADE', deep: '#6E3FAB' },
+  { id: 'colors',     gu: 'રંગો',         en: 'Colors',     mdi: 'mdi:palette-outline',            icon: '🎨', color: '#FFD43B', deep: '#D9A800' },
+  { id: 'body',       gu: 'શરીરના ભાગો', en: 'Body parts', mdi: 'mdi:human',                      icon: '👁️', color: '#FF9F80', deep: '#D85A3A' },
+  { id: 'family',     gu: 'કુટુંબ',       en: 'Family',     mdi: 'mdi:account-group-outline',      icon: '👨‍👩‍👧', color: '#4FC3F7', deep: '#0288D1' },
+  { id: 'weather',    gu: 'મોસમ',         en: 'Weather',    mdi: 'mdi:weather-partly-cloudy',      icon: '🌤️', color: '#A0E1F5', deep: '#3FA8C9' },
+  { id: 'transport',  gu: 'વાહન',         en: 'Transport',  mdi: 'mdi:car-outline',                icon: '🚗', color: '#7DD9A8', deep: '#2C9D6B' },
+];
+
+function TopicsScreen({ onBack, lang, sound }) {
+  const [picked, setPicked] = useState(null);   // category id
+  const [item, setItem] = useState(null);       // KB item
+  const tts = useTTS();
+  const fx = useSound(sound);
+
+  // Auto-pronounce when an item opens
+  useEffect(() => {
+    if (item) tts.speakBilingual(item.gu, item.en);
+  }, [item]);
+
+  if (item) {
+    return (
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column',
+        background: 'linear-gradient(180deg, #FFFAF2 0%, #FFE4C7 100%)',
+        overflow: 'hidden',
+      }}>
+        <div className="gs-header">
+          <button onClick={() => { fx.tap(); setItem(null); }} className="press gs-icon-btn"
+                  aria-label={lang === 'en' ? 'Back' : 'પાછળ'}>
+            <Icon.Back size={22} color="var(--ink)" />
+          </button>
+          <div className="gs-muted" style={{ flex: 1, fontWeight: 700 }}>
+            {TOPIC_META.find(t => t.id === picked).gu} · {TOPIC_META.find(t => t.id === picked).en}
+          </div>
+        </div>
+
+        <div style={{ flex: 1, padding: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+          <div className="pop-in" style={{
+            width: 200, height: 200, borderRadius: 32,
+            background: '#fff', border: '3px solid var(--ink)',
+            boxShadow: '0 6px 0 var(--ink)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 100,
+          }}>{item.icon || '✨'}</div>
+
+          <div className="fade-in" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 44, fontWeight: 800, color: 'var(--ink)', lineHeight: 1, textTransform: 'uppercase' }}>
+              {item.en}
+            </div>
+            <div style={{ fontSize: 36, fontWeight: 700, color: 'var(--saffron-deep)', lineHeight: 1.1, marginTop: 4 }}>
+              {item.gu}
+            </div>
+            {item.phon && (
+              <div style={{ fontSize: 14, fontFamily: 'monospace', color: 'var(--ink-soft)', marginTop: 4 }}>
+                {item.phon}
+              </div>
+            )}
+          </div>
+
+          {item.story_gu && (
+            <div className="fade-in" style={{
+              background: '#fff', borderRadius: 20,
+              border: '2px dashed var(--saffron)',
+              padding: 14, width: '100%',
+            }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.35 }}>
+                {item.story_gu}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink-soft)', lineHeight: 1.35, marginTop: 4 }}>
+                {item.story_en}
+              </div>
+            </div>
+          )}
+
+          <button onClick={() => tts.speakBilingual(item.gu, item.en)} className="press btn-chunky" style={{
+            background: tts.speaking ? 'var(--saffron)' : '#fff',
+            color: tts.speaking ? '#fff' : 'var(--ink)',
+            padding: '14px 22px', fontSize: 16, fontWeight: 800,
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+          }}>
+            <Icon.Speaker size={22} color={tts.speaking ? '#fff' : 'var(--saffron-deep)'} />
+            {tts.speaking ? 'બોલી રહ્યું છે...' : 'સાંભળો · Listen again'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (picked) {
+    const meta = TOPIC_META.find(t => t.id === picked);
+    const items = KB[picked] || [];
+    return (
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column',
+        background: 'var(--bg)', overflow: 'hidden',
+      }}>
+        <ScreenHeader
+          onBack={() => { fx.tap(); setPicked(null); }}
+          gu={<><span style={{ marginRight: 'var(--sp-2)' }}>{meta.icon}</span>{meta.gu}</>}
+          en={`${meta.en} · ${items.length} ${lang === 'en' ? 'items' : 'વસ્તુ'}`}
+          lang={lang}
+        />
+
+        <div style={{
+          flex: 1, padding: '4px 16px 16px', overflowY: 'auto',
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignContent: 'start',
+        }}>
+          {items.map((it, i) => (
+            <button key={i} onClick={() => { fx.tap(); setItem(it); }} className="press stagger-in" style={{
+              background: '#fff',
+              border: `3px solid ${meta.deep}`,
+              boxShadow: `0 5px 0 ${meta.deep}`,
+              borderRadius: 20,
+              padding: '14px 8px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+              minHeight: 120,
+              animationDelay: `${i * 45}ms`,
+            }}>
+              <div style={{ fontSize: 44, lineHeight: 1 }}>{it.icon || '✨'}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.1, textAlign: 'center' }}>
+                {it.gu}
+              </div>
+              {lang !== 'gu' && (
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink-soft)', textTransform: 'capitalize' }}>
+                  {it.en}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'var(--bg)', overflow: 'hidden',
+    }}>
+      <ScreenHeader
+        onBack={onBack}
+        gu="વિષયો"
+        en="Pick a topic to explore"
+        lang={lang}
+        right={<Owl size={48} mood="reading" />}
+      />
+
+      <div style={{
+        flex: 1, padding: '4px 16px 16px', overflowY: 'auto',
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignContent: 'start',
+      }}>
+        {TOPIC_META.map((t, i) => (
+          <button key={t.id} onClick={() => { fx.tap(); setPicked(t.id); }} className="press stagger-in" style={{
+            background: t.color, color: '#fff',
+            border: '3px solid var(--ink)',
+            boxShadow: `0 5px 0 ${t.deep}`,
+            borderRadius: 22, padding: '16px 10px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+            minHeight: 120,
+            animationDelay: `${i * 50}ms`,
+          }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: 14,
+              background: 'rgba(255,255,255,0.95)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '2px solid var(--ink)',
+            }}>
+              <Iconify icon={t.mdi} size={36} color={t.deep} fallback={t.icon} />
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 800, lineHeight: 1.1, textShadow: '0 1.5px 0 rgba(0,0,0,0.18)' }}>
+              {t.gu}
+            </div>
+            {lang !== 'gu' && (
+              <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.95 }}>{t.en}</div>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── MATCH PAIRS GAME ─────────────────────── */
+
+function MatchScreen({ onBack, onWin, lang, sound }) {
+  const tts = useTTS();
+  const fx = useSound(sound);
+
+  // Random 5 from animals + fruits
+  const pool = useMemo(() => {
+    const all = [...KB.animals, ...KB.fruits, ...KB.classroom];
+    const shuffled = [...all].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 5);
+  }, []);
+
+  const [leftCol, rightCol] = useMemo(() => [
+    [...pool].sort(() => Math.random() - 0.5),
+    [...pool].sort(() => Math.random() - 0.5),
+  ], [pool]);
+
+  const [pickedLeft, setPickedLeft] = useState(null);
+  const [pickedRight, setPickedRight] = useState(null);
+  const [matched, setMatched] = useState(new Set());
+  const [wrong, setWrong] = useState(null);
+
+  useEffect(() => {
+    if (pickedLeft && pickedRight) {
+      if (pickedLeft.en === pickedRight.en) {
+        fx.success();
+        setMatched(new Set([...matched, pickedLeft.en]));
+        setPickedLeft(null); setPickedRight(null);
+        if (matched.size + 1 === pool.length) {
+          fx.levelUp();
+          setTimeout(() => onWin(pool.length), 700);
+        }
+      } else {
+        fx.error();
+        setWrong({ l: pickedLeft.en, r: pickedRight.en });
+        setTimeout(() => {
+          setPickedLeft(null); setPickedRight(null); setWrong(null);
+        }, 700);
+      }
+    }
+  }, [pickedLeft, pickedRight]);
+
+  const cardStyle = (item, side) => {
+    const isMatched = matched.has(item.en);
+    const isPicked = side === 'L' ? pickedLeft === item : pickedRight === item;
+    const isWrong = wrong && (side === 'L' ? wrong.l === item.en : wrong.r === item.en);
+    return {
+      background: isMatched ? 'var(--green-soft)' : isWrong ? 'var(--pink-soft)' : isPicked ? 'var(--saffron-soft)' : '#fff',
+      border: `3px solid ${isMatched ? 'var(--green)' : isWrong ? 'var(--pink)' : isPicked ? 'var(--saffron)' : 'var(--ink)'}`,
+      boxShadow: `0 4px 0 ${isMatched ? 'var(--green-deep)' : isWrong ? 'var(--pink-deep)' : isPicked ? 'var(--saffron-deep)' : 'var(--ink)'}`,
+      opacity: isMatched ? 0.65 : 1,
+      borderRadius: 18,
+      padding: '10px 6px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexDirection: 'column', gap: 3,
+      flex: 1, minHeight: 0,
+      transition: 'all 0.2s',
+      pointerEvents: isMatched ? 'none' : 'auto',
+    };
+  };
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'linear-gradient(180deg, #FFE0E9 0%, #FFFAF2 40%)',
+      padding: '14px 16px 16px', overflow: 'hidden',
+    }}>
+      <ScreenHeader
+        onBack={onBack}
+        gu={<><span style={{ marginRight: 'var(--sp-2)' }}>🧩</span>જોડી મેળવો</>}
+        en="Match the pairs"
+        lang={lang}
+        right={(
+          <div className="gs-chip" style={{
+            background: 'var(--green-soft)',
+            border: 'var(--bw) solid var(--green)',
+            color: 'var(--green-deep)',
+            fontWeight: 800,
+            fontSize: 'var(--fs-base)',
+          }}>{matched.size}/{pool.length}</div>
+        )}
+      />
+
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-soft)', textAlign: 'center', marginBottom: 8 }}>
+        ગુજરાતી ↔ English · Tap pairs to match
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {leftCol.map((it, i) => (
+            <button key={'L'+i} onClick={() => { fx.tap(); setPickedLeft(it); }}
+              className={`press stagger-in${wrong && wrong.l === it.en ? ' shake' : ''}`}
+              style={{ ...cardStyle(it, 'L'), animationDelay: `${i * 55}ms` }}>
+              <div style={{ fontSize: 26, lineHeight: 1 }}>{it.icon || '✨'}</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--ink)', lineHeight: 1 }}>
+                {it.gu}
+              </div>
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {rightCol.map((it, i) => (
+            <button key={'R'+i} onClick={() => { fx.tap(); setPickedRight(it); }}
+              className={`press stagger-in${wrong && wrong.r === it.en ? ' shake' : ''}`}
+              style={{ ...cardStyle(it, 'R'), animationDelay: `${120 + i * 55}ms` }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', textTransform: 'capitalize' }}>
+                {it.en}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── QUIZ + RESULTS ─────────────────────── */
+
+const QUIZ_QUESTIONS = [
+  {
+    image: '🇮🇳',
+    gu: 'ભારતનું રાષ્ટ્રીય પક્ષી કયું છે?',
+    en: 'Which is the national bird of India?',
+    options: [
+      { gu: 'કાગડો', en: 'Crow', icon: '🐦', correct: false },
+      { gu: 'મોર', en: 'Peacock', icon: '🦚', correct: true },
+      { gu: 'પોપટ', en: 'Parrot', icon: '🦜', correct: false },
+      { gu: 'ગરુડ', en: 'Eagle', icon: '🦅', correct: false },
+    ],
+  },
+  {
+    image: '🌍',
+    gu: 'ગુજરાતનું પાટનગર શું છે?',
+    en: 'What is the capital of Gujarat?',
+    options: [
+      { gu: 'સુરત', en: 'Surat', icon: '🏙️', correct: false },
+      { gu: 'વડોદરા', en: 'Vadodara', icon: '🏛️', correct: false },
+      { gu: 'ગાંધીનગર', en: 'Gandhinagar', icon: '🏢', correct: true },
+      { gu: 'અમદાવાદ', en: 'Ahmedabad', icon: '🌆', correct: false },
+    ],
+  },
+  {
+    image: '🌞',
+    gu: 'એક અઠવાડિયામાં કેટલા દિવસ હોય?',
+    en: 'How many days are in a week?',
+    options: [
+      { gu: 'પાંચ', en: 'Five', icon: '5️⃣', correct: false },
+      { gu: 'છ', en: 'Six', icon: '6️⃣', correct: false },
+      { gu: 'સાત', en: 'Seven', icon: '7️⃣', correct: true },
+      { gu: 'આઠ', en: 'Eight', icon: '8️⃣', correct: false },
+    ],
+  },
+  {
+    image: '🐅',
+    gu: 'ભારતનું રાષ્ટ્રીય પ્રાણી કયું છે?',
+    en: 'What is the national animal of India?',
+    options: [
+      { gu: 'સિંહ', en: 'Lion', icon: '🦁', correct: false },
+      { gu: 'વાઘ', en: 'Tiger', icon: '🐅', correct: true },
+      { gu: 'હાથી', en: 'Elephant', icon: '🐘', correct: false },
+      { gu: 'ગાય', en: 'Cow', icon: '🐄', correct: false },
+    ],
+  },
+  {
+    image: '🌈',
+    gu: 'મેઘધનુષમાં કેટલા રંગ હોય છે?',
+    en: 'How many colours are in a rainbow?',
+    options: [
+      { gu: 'પાંચ', en: 'Five', icon: '5️⃣', correct: false },
+      { gu: 'છ', en: 'Six', icon: '6️⃣', correct: false },
+      { gu: 'સાત', en: 'Seven', icon: '7️⃣', correct: true },
+      { gu: 'આઠ', en: 'Eight', icon: '8️⃣', correct: false },
+    ],
+  },
+  {
+    image: '🥭',
+    gu: 'ફળોનો રાજા કયું ફળ છે?',
+    en: 'Which fruit is the king of fruits?',
+    options: [
+      { gu: 'સફરજન', en: 'Apple', icon: '🍎', correct: false },
+      { gu: 'કેળું', en: 'Banana', icon: '🍌', correct: false },
+      { gu: 'કેરી', en: 'Mango', icon: '🥭', correct: true },
+      { gu: 'દ્રાક્ષ', en: 'Grape', icon: '🍇', correct: false },
+    ],
+  },
+  {
+    image: '🐄',
+    gu: 'ગાય આપણને શું આપે છે?',
+    en: 'What does a cow give us?',
+    options: [
+      { gu: 'ઊન', en: 'Wool', icon: '🧶', correct: false },
+      { gu: 'દૂધ', en: 'Milk', icon: '🥛', correct: true },
+      { gu: 'મધ', en: 'Honey', icon: '🍯', correct: false },
+      { gu: 'ઈંડું', en: 'Egg', icon: '🥚', correct: false },
+    ],
+  },
+  {
+    image: '☀️',
+    gu: 'સૂર્ય શું છે?',
+    en: 'What is the sun?',
+    options: [
+      { gu: 'ગ્રહ', en: 'Planet', icon: '🪐', correct: false },
+      { gu: 'તારો', en: 'Star', icon: '⭐', correct: true },
+      { gu: 'ઉપગ્રહ', en: 'Satellite', icon: '🛰️', correct: false },
+      { gu: 'ધૂમકેતુ', en: 'Comet', icon: '☄️', correct: false },
+    ],
+  },
+  {
+    image: '🦚',
+    gu: 'મોર શું બોલે છે?',
+    en: 'What sound does a peacock make?',
+    options: [
+      { gu: 'મ્યાઉં', en: 'Meow', icon: '🐈', correct: false },
+      { gu: 'ભૌ ભૌ', en: 'Woof', icon: '🐕', correct: false },
+      { gu: 'કેકા', en: 'Keka', icon: '🦚', correct: true },
+      { gu: 'ગર્જ', en: 'Roar', icon: '🦁', correct: false },
+    ],
+  },
+  {
+    image: '🟧',
+    gu: 'ભારતના ધ્વજમાં ઉપરનો રંગ કયો છે?',
+    en: 'Which is the top colour in the Indian flag?',
+    options: [
+      { gu: 'લીલો', en: 'Green', icon: '🟢', correct: false },
+      { gu: 'સફેદ', en: 'White', icon: '⚪', correct: false },
+      { gu: 'કેસરી', en: 'Saffron', icon: '🟠', correct: true },
+      { gu: 'વાદળી', en: 'Blue', icon: '🔵', correct: false },
+    ],
+  },
+];
+
+/* Pick N random questions per session for replayability */
+function pickQuiz(n) {
+  const arr = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5);
+  return arr.slice(0, Math.min(n, arr.length));
+}
+
+function QuizScreen({ onBack, onComplete, lang, sound, onCorrectStreak, onWrongAnswer }) {
+  const questions = useMemo(() => pickQuiz(5), []);
+  const fx = useSound(sound);
+  const [qIdx, setQIdx] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [stars, setStars] = useState(0);
+  const q = questions[qIdx];
+  const total = questions.length;
+
+  const pick = (i) => {
+    if (selected !== null) return;
+    setSelected(i);
+    const isCorrect = q.options[i].correct;
+    setShowFeedback(true);
+    if (isCorrect) {
+      fx.success();
+      setStars(s => s + 1);
+      onCorrectStreak && onCorrectStreak();
+    } else {
+      fx.error();
+      onWrongAnswer && onWrongAnswer();
+    }
+
+    setTimeout(() => {
+      if (qIdx + 1 < total) {
+        setQIdx(qIdx + 1);
+        setSelected(null);
+        setShowFeedback(false);
+      } else {
+        if (stars + (isCorrect ? 1 : 0) === total) fx.levelUp();
+        onComplete(stars + (isCorrect ? 1 : 0), total);
+      }
+    }, 1800);
+  };
+
+  const optionColors = [
+    { bg: '#FFB85C', deep: '#F37820' },
+    { bg: '#6BD662', deep: '#138808' },
+    { bg: '#4FC3F7', deep: '#0288D1' },
+    { bg: '#FF6F91', deep: '#D14570' },
+  ];
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'linear-gradient(180deg, #EDE3FA 0%, #FFFAF2 40%)',
+      padding: '14px 16px 16px', overflow: 'hidden',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+        <button onClick={onBack} className="press" style={{
+          width: 44, height: 44, borderRadius: 22,
+          background: '#fff', border: '2.5px solid var(--ink)',
+          boxShadow: '0 3px 0 var(--ink)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Icon.Back size={22} color="var(--ink)" />
+        </button>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--ink-soft)', textTransform: 'uppercase' }}>
+            પ્રશ્ન · Question {qIdx + 1}/{total}
+          </div>
+          <div style={{
+            marginTop: 4, height: 10, borderRadius: 5,
+            background: '#fff', border: '2px solid var(--ink)',
+            overflow: 'hidden',
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${((qIdx + (showFeedback ? 1 : 0)) / total) * 100}%`,
+              background: 'linear-gradient(90deg, #9C6ADE, #FF9933)',
+              transition: 'width 0.4s',
+            }} />
+          </div>
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 4,
+          background: 'var(--yellow-soft)', padding: '6px 10px',
+          borderRadius: 999, border: '2px solid var(--yellow)',
+        }}>
+          <Icon.Star size={18} />
+          <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--ink)' }}>{stars}</span>
+        </div>
+      </div>
+
+      <div key={qIdx} className="pop-in" style={{
+        background: '#fff', borderRadius: 24,
+        border: '3px solid var(--ink)',
+        boxShadow: '0 5px 0 var(--ink)',
+        padding: '18px', marginBottom: 14,
+        textAlign: 'center',
+      }}>
+        <div style={{
+          width: 80, height: 80, borderRadius: 20,
+          background: 'var(--purple-soft)',
+          border: '2.5px solid var(--purple)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 50, margin: '0 auto 10px',
+        }}>{q.image}</div>
+        <div style={{ fontSize: 19, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.2 }}>
+          {q.gu}
+        </div>
+        {lang !== 'gu' && (
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)', marginTop: 4 }}>
+            {q.en}
+          </div>
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, flex: 1 }}>
+        {q.options.map((opt, i) => {
+          const c = optionColors[i];
+          const isSelected = selected === i;
+          const isCorrect = opt.correct;
+          let bg = c.bg, border = 'var(--ink)', shadow = c.deep;
+          let textColor = '#fff';
+          if (showFeedback) {
+            if (isCorrect) { bg = 'var(--green)'; shadow = 'var(--green-deep)'; }
+            else if (isSelected) { bg = '#999'; shadow = '#666'; }
+            else { bg = '#E8E0D4'; shadow = '#B8AC9A'; textColor = 'var(--ink-soft)'; }
+          }
+          return (
+            <button key={i} onClick={() => pick(i)}
+              className={`press stagger-in${showFeedback && isSelected && !isCorrect ? ' shake' : ''}`}
+              style={{
+              background: bg, color: textColor,
+              border: `3px solid ${border}`,
+              boxShadow: `0 5px 0 ${shadow}`,
+              borderRadius: 20,
+              padding: '12px 8px',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 6,
+              transition: 'background 0.2s, box-shadow 0.2s, transform 0.2s',
+              transform: showFeedback && isCorrect ? 'scale(1.04)' : 'scale(1)',
+              position: 'relative', minHeight: 96,
+              animationDelay: showFeedback ? '0ms' : `${i * 55}ms`,
+            }}>
+              <div style={{ fontSize: 32, lineHeight: 1 }}>{opt.icon}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, lineHeight: 1.1, textShadow: textColor === '#fff' ? '0 1.5px 0 rgba(0,0,0,0.18)' : 'none' }}>
+                {opt.gu}
+              </div>
+              {lang !== 'gu' && (
+                <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.95 }}>
+                  {opt.en}
+                </div>
+              )}
+              {showFeedback && isCorrect && (
+                <div className="star-pop" style={{
+                  position: 'absolute', top: -10, right: -10,
+                  width: 32, height: 32, borderRadius: 16,
+                  background: '#fff', border: '2.5px solid var(--green-deep)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon.Check size={20} color="var(--green-deep)" />
+                </div>
+              )}
+              {showFeedback && isSelected && !isCorrect && (
+                <div className="star-pop" style={{
+                  position: 'absolute', top: -10, right: -10,
+                  width: 32, height: 32, borderRadius: 16,
+                  background: '#fff', border: '2.5px solid var(--pink-deep)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon.Cross size={20} color="var(--pink-deep)" />
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {showFeedback && (
+        <div className="slide-up" style={{
+          marginTop: 12, padding: '10px 14px',
+          background: q.options[selected].correct ? 'var(--green-soft)' : 'var(--pink-soft)',
+          border: `2.5px solid ${q.options[selected].correct ? 'var(--green)' : 'var(--pink)'}`,
+          borderRadius: 16,
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <div style={{ fontSize: 28 }}>
+            {q.options[selected].correct ? '🎉' : '💪'}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.1 }}>
+              {q.options[selected].correct ? 'વાહ! શાબાશ!' : 'કોઈ વાંધો નહીં!'}
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink-soft)' }}>
+              {q.options[selected].correct ? 'Wahoo! Well done!' : 'No problem, keep trying!'}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResultsScreen({ stars, total, onHome, onRetry }) {
+  const [confetti, setConfetti] = useState([]);
+  useEffect(() => {
+    const colors = ['#FF9933', '#138808', '#FFD43B', '#9C6ADE', '#FF6F91', '#4FC3F7'];
+    const c = Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      left: (i * 13.7) % 100,
+      delay: (i % 8) * 0.1,
+      duration: 2 + ((i % 5) * 0.4),
+      color: colors[i % colors.length],
+      size: 8 + ((i % 4) * 2),
+    }));
+    setConfetti(c);
+  }, []);
+
+  const percent = stars / total;
+  const message = percent === 1
+    ? { gu: 'સંપૂર્ણ ગુણ!', en: 'Perfect score!' }
+    : percent >= 0.5
+      ? { gu: 'શાબાશ!', en: 'Well done!' }
+      : { gu: 'સારો પ્રયત્ન!', en: 'Good try!' };
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(160deg, #FFD43B 0%, #FF9933 100%)',
+      padding: 24, position: 'relative', overflow: 'hidden',
+    }}>
+      {confetti.map(c => (
+        <div key={c.id} style={{
+          position: 'absolute', top: -20,
+          left: `${c.left}%`,
+          width: c.size, height: c.size,
+          background: c.color, borderRadius: c.id % 2 ? '50%' : 2,
+          animation: `confetti-fall ${c.duration}s ${c.delay}s linear infinite`,
+        }} />
+      ))}
+
+      <div className="bobbing"><Owl size={140} mood="cheering" wave={true} /></div>
+
+      <div className="pop-in" style={{
+        textAlign: 'center', marginTop: 16, color: '#fff',
+        textShadow: '0 3px 0 rgba(0,0,0,0.2)',
+      }}>
+        <div style={{ fontSize: 44, fontWeight: 800, lineHeight: 1 }}>{message.gu}</div>
+        <div style={{ fontSize: 22, fontWeight: 700, marginTop: 4, opacity: 0.95 }}>{message.en}</div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, marginTop: 30 }}>
+        {Array.from({ length: total }).map((_, i) => (
+          <div key={i} className="star-pop" style={{ animationDelay: `${0.4 + i * 0.2}s` }}>
+            <Icon.Star size={56} filled={i < stars} color={i < stars ? '#FFD43B' : '#fff'} />
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        marginTop: 24, background: '#fff',
+        borderRadius: 20, padding: '14px 22px',
+        border: '3px solid var(--ink)',
+        boxShadow: '0 4px 0 var(--ink)',
+        textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink-soft)' }}>
+          તમે મેળવ્યા · You earned
+        </div>
+        <div style={{ fontSize: 38, fontWeight: 800, color: 'var(--saffron-deep)', lineHeight: 1.1 }}>
+          {stars} / {total} ⭐
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, marginTop: 28, width: '100%' }}>
+        <button onClick={onRetry} className="press btn-chunky" style={{
+          flex: 1, padding: '14px',
+          background: '#fff', color: 'var(--saffron-deep)',
+          fontSize: 16, fontWeight: 800,
+        }}>↻ ફરી રમો · Play again</button>
+        <button onClick={onHome} className="press btn-chunky" style={{
+          flex: 1, padding: '14px',
+          background: 'var(--green)', color: '#fff',
+          fontSize: 16, fontWeight: 800,
+        }}>🏠 ઘરે · Home</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── SETTINGS + DASHBOARD ─────────────────────── */
+
+function SettingsScreen({ onBack, lang, setLang, fontSize, setFontSize, sound, setSound, onResetStars }) {
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'var(--bg)', overflow: 'hidden',
+    }}>
+      <ScreenHeader
+        onBack={onBack}
+        gu="સેટિંગ્સ"
+        en="Settings"
+        lang={lang}
+      />
+
+      <div style={{ flex: 1, padding: `var(--sp-1) var(--sp-4) var(--sp-4)`, overflowY: 'auto',
+                     display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+        <div className="gs-card">
+          <div className="gs-h3" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <span style={{ fontSize: 20, lineHeight: 1 }}>🌐</span>
+            <span>ભાષા · Language</span>
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--sp-1)', marginTop: 'var(--sp-3)',
+                        background: 'var(--bg)', borderRadius: 'var(--r-sm)',
+                        padding: 'var(--sp-1)', border: 'var(--bw-hair) solid var(--line)' }}>
+            {[{id:'gu', label:'ગુજરાતી'},{id:'both', label:'બન્ને'},{id:'en', label:'English'}].map(o => (
+              <button key={o.id} onClick={() => setLang(o.id)} style={{
+                flex: 1, padding: 'var(--sp-3) var(--sp-2)', minHeight: 44, borderRadius: 'var(--r-xs)',
+                background: lang === o.id ? 'var(--saffron)' : 'transparent',
+                color: lang === o.id ? 'var(--text-inverse)' : 'var(--text-primary)',
+                fontSize: 'var(--fs-md)', fontWeight: 700,
+                transition: 'background 0.18s ease, color 0.18s ease',
+              }}>{o.label}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="gs-card">
+          <div className="gs-h3" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <span style={{ fontSize: 20, lineHeight: 1 }}>🔤</span>
+            <span>અક્ષર કદ · Text size</span>
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--sp-2)', marginTop: 'var(--sp-3)' }}>
+            {[{id:'regular', l:'સામાન્ય', s:14},{id:'large', l:'મોટું', s:18},{id:'xl', l:'ખૂબ મોટું', s:22}].map(o => (
+              <button key={o.id} onClick={() => setFontSize(o.id)} className="press" style={{
+                flex: 1, padding: 'var(--sp-3) var(--sp-2)', borderRadius: 'var(--r-sm)',
+                background: fontSize === o.id ? 'var(--green-soft)' : 'var(--bg)',
+                border: `var(--bw) solid ${fontSize === o.id ? 'var(--green)' : 'var(--line)'}`,
+                fontSize: o.s, fontWeight: 700, color: 'var(--text-primary)',
+              }}>{o.l}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="gs-card" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+          <div style={{ flex: 1 }}>
+            <div className="gs-h3" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+              <span style={{ fontSize: 20, lineHeight: 1 }}>🔊</span>
+              <span>અવાજ · Sound</span>
+            </div>
+            <div className="gs-tiny" style={{ fontWeight: 500 }}>Voice & sound effects</div>
+          </div>
+          <button onClick={() => setSound(!sound)} aria-label={sound ? 'Mute' : 'Unmute'} style={{
+            width: 56, height: 32, borderRadius: 'var(--r-md)',
+            background: sound ? 'var(--green)' : '#ccc',
+            border: 'var(--bw) solid var(--ink)', position: 'relative',
+            transition: 'background 0.2s',
+          }}>
+            <div style={{
+              position: 'absolute', top: 2, left: sound ? 26 : 2,
+              width: 24, height: 24, borderRadius: 12, background: 'var(--paper)',
+              border: 'var(--bw-hair) solid var(--ink)', transition: 'left 0.2s',
+            }} />
+          </button>
+        </div>
+
+        <div className="gs-card">
+          <div className="gs-h3" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <span style={{ fontSize: 20, lineHeight: 1 }}>💾</span>
+            <span>સ્ટોરેજ · Storage</span>
+          </div>
+          <div style={{ marginTop: 'var(--sp-3)', height: 12, borderRadius: 6,
+                        background: 'var(--bg)', border: 'var(--bw-hair) solid var(--line)', overflow: 'hidden' }}>
+            <div style={{ width: '42%', height: '100%',
+                          background: 'linear-gradient(90deg, var(--green), var(--saffron))' }} />
+          </div>
+          <div style={{ marginTop: 'var(--sp-2)', display: 'flex', justifyContent: 'space-between' }}>
+            <span className="gs-tiny" style={{ fontWeight: 600 }}>મોડેલ: 840 MB</span>
+            <span className="gs-tiny" style={{ fontWeight: 600 }}>2 GB ખાલી</span>
+          </div>
+        </div>
+
+        <button onClick={onResetStars} className="press" style={{
+          background: 'var(--paper)', borderRadius: 'var(--r-md)',
+          border: 'var(--bw) solid var(--pink)',
+          boxShadow: '0 3px 0 var(--pink)',
+          padding: 'var(--sp-3) var(--sp-4)',
+          fontSize: 'var(--fs-base)', fontWeight: 700, color: 'var(--pink-deep)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--sp-2)',
+        }}>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>♻️</span>
+          <span>તારા રીસેટ કરો · Reset stars</span>
+        </button>
+
+        <div className="gs-tiny" style={{ textAlign: 'center', marginTop: 'auto', fontWeight: 600 }}>
+          GyanSetu v1.0 · સંપૂર્ણ ઑફલાઇન
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardScreen({ onBack, stars, streak = 0, bestStreak = 0, unlocked = [] }) {
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      background: 'var(--bg)', overflow: 'hidden',
+    }}>
+      <ScreenHeader
+        onBack={onBack}
+        gu="કિરણની પ્રગતિ"
+        en="Kiran's Progress · Std 3"
+        right={(
+          <div className="gs-icon-btn" style={{
+            background: 'var(--saffron)', color: '#fff',
+            fontSize: 'var(--fs-xl)', fontWeight: 800,
+          }}>કિ</div>
+        )}
+      />
+
+      <div style={{ flex: 1, padding: '4px 16px 16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            { label: 'તારા · Stars', value: String(stars), icon: '⭐', bg: 'var(--yellow-soft)', border: 'var(--yellow)' },
+            { label: 'સળંગ · Streak', value: String(streak), icon: '🔥', bg: 'var(--pink-soft)', border: 'var(--pink)' },
+            { label: 'શ્રેષ્ઠ · Best', value: String(bestStreak), icon: '🚀', bg: 'var(--green-soft)', border: 'var(--green)' },
+            { label: 'બેજ · Badges', value: String(unlocked.length), icon: '🏅', bg: 'var(--purple-soft)', border: 'var(--purple)' },
+          ].map((s, i) => (
+            <div key={i} className="stagger-in" style={{
+              background: s.bg, border: `2px solid ${s.border}`,
+              borderRadius: 18, padding: '12px 14px',
+              animationDelay: `${i * 55}ms`,
+            }}>
+              <div style={{ fontSize: 22 }}>{s.icon}</div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.1, marginTop: 2 }}>{s.value}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-soft)' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="gs-card">
+          <div className="gs-h3" style={{ fontSize: 'var(--fs-base)', display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <span style={{ fontSize: 18, lineHeight: 1 }}>📈</span>
+            <span>અઠવાડિક પ્રગતિ · This week</span>
+          </div>
+          <div style={{ marginTop: 12, display: 'flex', alignItems: 'stretch', justifyContent: 'space-between', height: 110, gap: 6 }}>
+            {[{d:'સો',v:30},{d:'મં',v:60},{d:'બુ',v:45},{d:'ગુ',v:80},{d:'શુ',v:55},{d:'શ',v:90},{d:'ર',v:70}].map((d,i) => (
+              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'flex-end' }}>
+                  <div style={{
+                    width: '100%', height: `${d.v}%`,
+                    background: i === 5 ? 'var(--saffron)' : 'var(--green)',
+                    borderRadius: '6px 6px 2px 2px',
+                    border: '1.5px solid var(--ink)',
+                  }} />
+                </div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-soft)' }}>{d.d}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="gs-card">
+          <div className="gs-h3" style={{ fontSize: 'var(--fs-base)', marginBottom: 'var(--sp-3)',
+                                          display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+            <span style={{ fontSize: 18, lineHeight: 1 }}>🏅</span>
+            <span>પ્રાપ્ત બેજ · Achievements ({unlocked.length}/{ACHIEVEMENTS.length})</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 6 }}>
+            {ACHIEVEMENTS.map((a, i) => {
+              const got = unlocked.includes(a.id);
+              return (
+                <div key={a.id} className="stagger-in" style={{
+                  background: got ? 'var(--yellow-soft)' : '#f5f0e8',
+                  border: `2px solid ${got ? 'var(--yellow)' : 'var(--line)'}`,
+                  borderRadius: 12, padding: '8px 4px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  opacity: got ? 1 : 0.4,
+                  filter: got ? 'none' : 'grayscale(0.8)',
+                  animationDelay: `${i * 40}ms`,
+                  transition: 'opacity 0.3s ease, filter 0.3s ease',
+                }}>
+                  <div style={{ fontSize: 22, lineHeight: 1 }}>{a.icon}</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--ink)', textAlign: 'center', marginTop: 2, lineHeight: 1.1 }}>
+                    {a.gu}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <button className="press btn-chunky" style={{
+          padding: '14px', background: 'var(--green)', color: '#fff',
+          fontSize: 15, fontWeight: 800, marginTop: 4,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        }}>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>📤</span>
+          <span>શિક્ષકને મોકલો · Share with teacher</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── APP SHELL ─────────────────────── */
+
+/* Achievement definitions — unlocked by hitting milestones. */
+const ACHIEVEMENTS = [
+  { id: 'first-star',   gu: 'પહેલો તારો',   en: 'First star',     icon: '⭐', need: { stars: 1 } },
+  { id: 'starter',      gu: 'શરૂઆત',         en: 'Starter',        icon: '🌱', need: { stars: 10 } },
+  { id: 'fifty-stars',  gu: '૫૦ તારા',       en: '50 stars',       icon: '🌟', need: { stars: 50 } },
+  { id: 'century',      gu: '૧૦૦ તારા',     en: '100 stars',      icon: '💯', need: { stars: 100 } },
+  { id: 'streak-3',     gu: '૩ સળંગ',        en: '3 in a row',     icon: '🔥', need: { streak: 3 } },
+  { id: 'streak-7',     gu: '૭ સળંગ',        en: '7 in a row',     icon: '🚀', need: { streak: 7 } },
+  { id: 'matcher',      gu: 'જોડી રાજા',    en: 'Match king',     icon: '🧩', need: { matches: 1 } },
+  { id: 'curious',      gu: 'જિજ્ઞાસુ',     en: 'Curious mind',   icon: '🦉', need: { topics: 3 } },
+];
+
+function computeUnlocked(stats) {
+  return ACHIEVEMENTS.filter(a => {
+    for (const k in a.need) if ((stats[k] || 0) < a.need[k]) return false;
+    return true;
+  }).map(a => a.id);
+}
+
+function App() {
+  const [lang, setLang] = usePersistedState('gyansetu.lang', 'both');
+  const [fontSize, setFontSize] = usePersistedState('gyansetu.fontSize', 'regular');
+  const [sound, setSound] = usePersistedState('gyansetu.sound', true);
+  const [stars, setStars] = usePersistedState('gyansetu.stars', 48);
+  const [streak, setStreak] = usePersistedState('gyansetu.streak', 0);
+  const [bestStreak, setBestStreak] = usePersistedState('gyansetu.bestStreak', 0);
+  const [matches, setMatches] = usePersistedState('gyansetu.matches', 0);
+  const [topicsViewed, setTopicsViewed] = usePersistedState('gyansetu.topicsViewed', 0);
+  const [unlocked, setUnlocked] = usePersistedState('gyansetu.unlocked', []);
+  const [screen, setScreen] = useState('splash');
+  const [quizResult, setQuizResult] = useState(null);
+  const [toast, setToast] = useState(null);
+  const fx = useSound(sound);
+
+  const stats = { stars, streak: bestStreak, matches, topics: topicsViewed };
+
+  // Re-evaluate achievements when any stat changes; toast on new unlocks.
+  useEffect(() => {
+    const fresh = computeUnlocked(stats);
+    const newOnes = fresh.filter(id => !unlocked.includes(id));
+    if (newOnes.length) {
+      setUnlocked(fresh);
+      const a = ACHIEVEMENTS.find(x => x.id === newOnes[0]);
+      fx.levelUp();
+      setToast({ icon: a.icon, gu: 'પ્રાપ્ત: ' + a.gu, en: 'Unlocked: ' + a.en });
+      setTimeout(() => setToast(null), 2400);
+    }
+  }, [stars, bestStreak, matches, topicsViewed]);
+
+  const fontScale = fontSize === 'large' ? 1.1 : (fontSize === 'xl' ? 1.2 : 1);
+  const navigate = (s) => { if (s === 'topics') setTopicsViewed(v => v + 1); setScreen(s); };
+
+  const onCorrectStreak = () => {
+    setStreak(prev => {
+      const next = prev + 1;
+      if (next > bestStreak) setBestStreak(next);
+      return next;
+    });
+  };
+  const onWrongAnswer = () => setStreak(0);
+
+  const screenEl = (() => {
+    switch (screen) {
+      case 'splash':
+        return <SplashScreen onContinue={() => setScreen('loading')} />;
+      case 'loading':
+        return <LoadingScreen onReady={() => setScreen('home')} />;
+      case 'home':
+        return <HomeScreen
+          onNavigate={navigate} lang={lang} setLang={setLang}
+          studentName="કિરણ" stars={stars} streak={streak} />;
+      case 'topics':
+        return <TopicsScreen onBack={() => setScreen('home')} lang={lang} sound={sound} />;
+      case 'match':
+        return <MatchScreen
+          onBack={() => setScreen('home')}
+          onWin={(n) => {
+            setStars(s => s + n);
+            setMatches(m => m + 1);
+            setQuizResult({ stars: n, total: n });
+            setScreen('results');
+          }}
+          lang={lang} sound={sound} />;
+      case 'scan':
+        return <CameraScanScreen onBack={() => setScreen('home')} lang={lang} />;
+      case 'ask':
+        return <AskScreen onBack={() => setScreen('home')} lang={lang} />;
+      case 'quiz':
+        return <QuizScreen
+          onBack={() => setScreen('home')}
+          onComplete={(s, t) => {
+            setQuizResult({ stars: s, total: t });
+            setStars(prev => prev + s);
+            setScreen('results');
+          }}
+          lang={lang} sound={sound}
+          onCorrectStreak={onCorrectStreak}
+          onWrongAnswer={onWrongAnswer} />;
+      case 'results':
+        return <ResultsScreen
+          stars={quizResult.stars}
+          total={quizResult.total}
+          onHome={() => setScreen('home')}
+          onRetry={() => setScreen('quiz')} />;
+      case 'settings':
+        return <SettingsScreen
+          onBack={() => setScreen('home')}
+          lang={lang} setLang={setLang}
+          fontSize={fontSize} setFontSize={setFontSize}
+          sound={sound} setSound={setSound}
+          onResetStars={() => { setStars(0); setStreak(0); setBestStreak(0); }} />;
+      case 'dashboard':
+        return <DashboardScreen
+          onBack={() => setScreen('home')}
+          stars={stars} streak={streak} bestStreak={bestStreak}
+          unlocked={unlocked} />;
+      default:
+        return null;
+    }
+  })();
+
+  return (
+    <div style={{ '--fs-scale': fontScale, fontSize: `${fontScale * 16}px` }}>
+      <Phone screenKey={screen}>{screenEl}</Phone>
+      {toast && (
+        <div className="pop-in" style={{
+          position: 'fixed', left: '50%', bottom: 60,
+          transform: 'translateX(-50%)',
+          background: 'var(--saffron)', color: '#fff',
+          padding: '12px 22px', borderRadius: 999,
+          border: '3px solid var(--ink)',
+          boxShadow: '0 5px 0 var(--ink)',
+          fontSize: 16, fontWeight: 800, zIndex: 1000,
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <span style={{ fontSize: 26 }}>{toast.icon}</span>
+          <span>{toast.gu}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

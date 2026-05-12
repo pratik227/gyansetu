@@ -1,0 +1,90 @@
+# ===== macOS =====
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# ===== Claude Code / AI dev tools =====
+.claude/
+CLAUDE.md
+.cursor/
+.aider*
+.continue/
+
+# ===== Playwright / browser MCP =====
+.playwright-mcp/
+playwright-report/
+test-results/
+playwright/.cache/
+
+# ===== Node / web =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json.bak
+
+# ===== IDE =====
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# ===== Android build outputs (441 MB of bloat) =====
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/captures/
+android/.cxx/
+android/app/release/
+android/app/debug/
+
+# Keep the gradle wrapper script + jar, but ignore the cache
+.gradle/
+
+# ===== APK / model artifacts (too large for git) =====
+# APKs ship as GitHub Release assets, not in-repo
+*.apk
+*.aab
+
+# Gemma 4 model files — sideloaded by judges, not bundled
+*.litertlm
+*.task
+*.tflite
+*.bin
+*.safetensors
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Demo intermediate assets (video frames pre-stitch) =====
+# Uncomment the next line if frames are scratch-only and not referenced anywhere:
+# docs/video-frames/
+
+# ===== Env / secrets =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials.json
+
+# ===== Python (if any analysis scripts) =====
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# ===== Misc =====
+*.tmp
+*.bak
+*.orig

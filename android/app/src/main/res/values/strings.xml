@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GyanSetu</string>
+    <string name="app_tagline">Your Learning Friend</string>
+
+    <string name="cta_start">Let\'s Start!</string>
+    <string name="cta_listen">Listen</string>
+    <string name="cta_back">Back</string>
+    <string name="cta_home">Home</string>
+
+    <string name="status_ready">Ready</string>
+    <string name="status_offline">Works Offline</string>
+
+    <string name="home_camera_title">Camera Scan</string>
+    <string name="home_camera_desc">Snap any object</string>
+    <string name="home_ask_title">Ask Question</string>
+    <string name="home_ask_desc">Ask anything</string>
+    <string name="home_topics_title">Topics</string>
+    <string name="home_topics_desc">Learn new words</string>
+    <string name="home_match_title">Match Game</string>
+    <string name="home_match_desc">Match pairs to win</string>
+    <string name="home_quiz_title">GK Quiz</string>
+    <string name="home_quiz_desc">Play and learn</string>
+</resources>

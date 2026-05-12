@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand palette -->
+    <color name="saffron">#FF9933</color>
+    <color name="saffron_deep">#F37820</color>
+    <color name="green">#138808</color>
+    <color name="ink">#2A1810</color>
+
+    <!-- Surface colors (overridden in values-night) -->
+    <color name="bg">#FFFAF2</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_surface">#2A1810</color>
+
+    <!-- System chrome -->
+    <color name="status_bar">#FF9933</color>
+
+    <!-- Adaptive launcher background tint (used by mipmap-anydpi-v26 fallback
+         + the legacy color resource referenced by old launcher cache) -->
+    <color name="ic_launcher_background">#FF9933</color>
+</resources>

@@ -1,0 +1,71 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Pratik Patel (@pratik227 on GitHub)
+
+Source code, design assets, and documentation in this repository are licensed
+under the Creative Commons Attribution 4.0 International License. To view a
+copy of this license, visit:
+
+    https://creativecommons.org/licenses/by/4.0/
+
+Permissions
+-----------
+You are free to:
+  - Share — copy and redistribute the material in any medium or format
+  - Adapt — remix, transform, and build upon the material for any purpose,
+    including commercially.
+
+The licensor cannot revoke these freedoms as long as you follow the license
+terms.
+
+Conditions
+----------
+  - Attribution — You must give appropriate credit, provide a link to the
+    license, and indicate if changes were made. You may do so in any reasonable
+    manner, but not in any way that suggests the licensor endorses you or your
+    use.
+  - No additional restrictions — You may not apply legal terms or technological
+    measures that legally restrict others from doing anything the license
+    permits.
+
+Notices
+-------
+You do not have to comply with the license for elements of the material in
+the public domain or where your use is permitted by an applicable exception
+or limitation.
+
+No warranties are given. The license may not give you all of the permissions
+necessary for your intended use. For example, other rights such as publicity,
+privacy, or moral rights may limit how you use the material.
+
+Third-party assets
+------------------
+This project depends on third-party libraries and models that are distributed
+under their own licenses, which apply independently of this license:
+
+  - Gemma 4 model weights (google/gemma-4-E2B-it,
+    litert-community/gemma-4-E2B-it-litert-lm)
+        Apache License 2.0
+        Subject also to Google's Gemma Terms of Use:
+        https://ai.google.dev/gemma/terms
+
+  - LiteRT-LM (com.google.ai.edge.litertlm:litertlm-android:0.10.2)
+        Apache License 2.0
+        Google AI Edge runtime; chosen over MediaPipe Tasks GenAI
+        because the Gemma 4 .litertlm format is loaded natively by
+        this runtime (not by tasks-genai). See GemmaInferenceEngine.kt
+        header comment for the full trade-off.
+
+  - Jetpack Compose, Room, CameraX, AndroidX
+        Apache License 2.0
+
+  - React, react-dom, babel-standalone, iconify-icon (web demo)
+        MIT License
+
+  - Baloo Bhai 2 font (web demo)
+        SIL Open Font License 1.1
+
+This LICENSE file applies only to the original code, design, and content
+authored for this project. Submission for the Gemma 4 Good Hackathon is
+made under this CC-BY 4.0 license per the competition's winner-license
+requirement.

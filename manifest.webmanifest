@@ -1,0 +1,24 @@
+{
+  "name": "GyanSetu — જ્ઞાનસેતુ",
+  "short_name": "GyanSetu",
+  "description": "Offline AI tutor for primary school children in rural Gujarat. Bilingual (Gujarati + English) learning with camera scan, ask-anything, quizzes, and games. Works fully offline.",
+  "lang": "gu",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FF9933",
+  "theme_color": "#FF9933",
+  "categories": ["education", "kids"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Ask a question",  "short_name": "Ask",   "url": "./index.html#ask",   "icons": [{ "src": "icon.svg", "sizes": "any" }] },
+    { "name": "Camera scan",     "short_name": "Scan",  "url": "./index.html#scan",  "icons": [{ "src": "icon.svg", "sizes": "any" }] },
+    { "name": "Quiz",            "short_name": "Quiz",  "url": "./index.html#quiz",  "icons": [{ "src": "icon.svg", "sizes": "any" }] }
+  ]
+}

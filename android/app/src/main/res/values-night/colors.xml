@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark-mode overrides. Brand colors stay (saffron is part of identity) but
+     surface colors invert. -->
+<resources>
+    <color name="bg">#1F1610</color>
+    <color name="surface">#2A1810</color>
+    <color name="on_surface">#FFE4C7</color>
+    <color name="status_bar">#F37820</color>
+</resources>

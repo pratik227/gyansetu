@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">જ્ઞાનસેતુ</string>
+    <string name="app_tagline">તમારો શીખવાનો સાથી</string>
+
+    <string name="cta_start">ચાલો શરૂ કરીએ!</string>
+    <string name="cta_listen">સાંભળો</string>
+    <string name="cta_back">પાછળ</string>
+    <string name="cta_home">ઘરે</string>
+
+    <string name="status_ready">તૈયાર</string>
+    <string name="status_offline">સંપૂર્ણ ઑફલાઇન</string>
+
+    <string name="home_camera_title">ફોટો જુઓ</string>
+    <string name="home_camera_desc">કોઈપણ વસ્તુનો ફોટો પાડો</string>
+    <string name="home_ask_title">પ્રશ્ન પૂછો</string>
+    <string name="home_ask_desc">કોઈપણ સવાલ પૂછો</string>
+    <string name="home_topics_title">વિષયો</string>
+    <string name="home_topics_desc">નવા શબ્દો શીખો</string>
+    <string name="home_match_title">જોડી મેળવો</string>
+    <string name="home_match_desc">જોડી મેળવો અને જીતો</string>
+    <string name="home_quiz_title">જ્ઞાન રમત</string>
+    <string name="home_quiz_desc">મજાની રમત રમો</string>
+</resources>

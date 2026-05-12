@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed-icon monochrome layer (Android 13+).
+     Single-colour silhouette that the system tints with the user's wallpaper
+     accent — gives auto light/dark mode support on the launcher.
+     Use only the *recognisable* shape outline; details are dropped because the
+     icon will be tinted to a single colour. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Composite owl silhouette: head + body + wings + ear tufts as one
+         outlined shape. The system tints this with @android:color/system_accent. -->
+    <path android:pathData="M54,16 L72,20 L66,22 L66,24 L70,28 L74,38 Q88,42 88,52 Q88,62 78,68 Q82,72 80,80 L70,82 Q62,86 54,86 Q46,86 38,82 L28,80 Q26,72 30,68 Q20,62 20,52 Q20,42 34,38 L38,28 L42,24 L42,22 L36,20 Z"
+          android:fillColor="#FFFFFF"/>
+    <!-- Eye sockets cut-out (subtractive via stroke, simulated with a small dark dot) -->
+    <path android:pathData="M44,44 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"
+          android:fillColor="#000000"
+          android:fillAlpha="0.0"/>
+</vector>

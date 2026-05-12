@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base app theme (light). Dark variant lives in values-night/themes.xml. -->
+    <style name="Theme.GyanSetu" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- System splash screen (Android 12+, API 31): saffron background +
+             tinted launcher icon foreground, with our brand-colored ring.
+             Pre-31 Android falls back to windowBackground above which is
+             also brand-colored, so the visual is consistent. -->
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/saffron</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/ic_launcher_foreground</item>
+        <item name="android:windowSplashScreenIconBackgroundColor" tools:targetApi="31">@color/saffron</item>
+    </style>
+</resources>

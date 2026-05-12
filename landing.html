@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#FF9933" />
+<meta name="description" content="GyanSetu — offline AI tutor for primary school children in rural Gujarat. Powered by Gemma 4 + Google AI Edge LiteRT. Bilingual, multimodal, fully offline." />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="GyanSetu — Offline AI Tutor for Rural India" />
+<meta property="og:description" content="The first AI tutor that works without internet. Five languages. Multi-tool agent. Built on Gemma 4 + LiteRT." />
+<meta property="og:image" content="docs/02-home.png" />
+
+<title>GyanSetu — Offline AI Tutor for Rural Gujarat · Built on Gemma 4 + LiteRT</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --saffron: #FF9933;
+    --saffron-deep: #F37820;
+    --green: #138808;
+    --green-deep: #0E6606;
+    --ink: #2A1810;
+    --ink-soft: #5C4A3E;
+    --bg: #FFFAF2;
+    --paper: #fff;
+    --line: rgba(42, 24, 16, 0.1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Baloo Bhai 2', system-ui, sans-serif;
+    margin: 0; color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--saffron-deep); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(160deg, #FFB85C 0%, #FF9933 50%, #F37820 100%);
+    color: white;
+    padding: 80px 24px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 320px; height: 320px; background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 72px); margin: 0 0 16px;
+    font-weight: 800; line-height: 1; text-shadow: 0 4px 0 rgba(0,0,0,0.12);
+  }
+  .hero h1 .gu { display: block; font-size: 1.4em; margin-bottom: 8px; }
+  .hero p.lead {
+    font-size: clamp(18px, 2.5vw, 26px); margin: 16px 0 32px;
+    opacity: 0.95; max-width: 720px; line-height: 1.4;
+  }
+  .hero .ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 26px; border-radius: 24px;
+    font-weight: 800; font-size: 18px; text-decoration: none;
+    border: 3px solid var(--ink); box-shadow: 0 5px 0 var(--ink);
+    transition: transform .1s, box-shadow .1s;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+  .btn-primary { background: white; color: var(--saffron-deep); }
+  .btn-secondary { background: var(--green); color: white; }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  .badge {
+    background: rgba(0,0,0,0.18); padding: 6px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 700; color: white;
+  }
+
+  /* Sections */
+  section { padding: 80px 0; }
+  section h2 {
+    font-size: clamp(28px, 4vw, 44px); margin: 0 0 48px;
+    font-weight: 800; text-align: center;
+  }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .feature {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 24px;
+    padding: 28px; box-shadow: 0 6px 0 var(--ink);
+  }
+  .feature .emoji { font-size: 48px; line-height: 1; margin-bottom: 12px; }
+  .feature h3 { font-size: 22px; margin: 0 0 8px; font-weight: 800; }
+  .feature p { margin: 0; color: var(--ink-soft); line-height: 1.5; font-weight: 600; }
+
+  /* Prize tracks */
+  .tracks {
+    background: white; padding: 80px 0;
+  }
+  .track-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .track {
+    border: 3px solid var(--ink); border-radius: 20px; padding: 22px;
+    background: linear-gradient(140deg, #FFF4C2, #FFE4C7);
+    box-shadow: 0 5px 0 var(--ink);
+  }
+  .track h4 { margin: 0 0 8px; font-size: 18px; font-weight: 800; }
+  .track .prize { font-size: 13px; color: var(--green-deep); font-weight: 800; margin-bottom: 8px; }
+  .track p { margin: 0; font-size: 14px; line-height: 1.4; color: var(--ink-soft); font-weight: 600; }
+
+  /* Screenshots */
+  .gallery {
+    background: linear-gradient(180deg, #FFE4C7 0%, var(--bg) 100%);
+  }
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .shots img {
+    width: 100%; aspect-ratio: 9/16; object-fit: cover;
+    border-radius: 16px; border: 3px solid var(--ink);
+    box-shadow: 0 4px 0 var(--ink);
+  }
+
+  /* Architecture */
+  .architecture {
+    background: var(--ink); color: white;
+  }
+  .architecture h2 { color: white; }
+  .arch-diagram {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px; padding: 24px;
+    font-family: ui-monospace, 'SF Mono', monospace; font-size: 13px;
+    white-space: pre; overflow-x: auto;
+    color: #FFD43B;
+  }
+
+  /* Stats */
+  .impact-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px; margin-top: 32px;
+  }
+  .stat {
+    background: white; border: 3px solid var(--ink); border-radius: 20px;
+    padding: 24px; text-align: center; box-shadow: 0 5px 0 var(--ink);
+  }
+  .stat .num {
+    font-size: 42px; font-weight: 800; color: var(--saffron-deep); line-height: 1;
+  }
+  .stat .label {
+    font-size: 14px; font-weight: 700; color: var(--ink-soft); margin-top: 6px;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--ink); color: white; padding: 40px 24px;
+    text-align: center;
+  }
+  footer p { margin: 8px 0; opacity: 0.85; }
+  footer a { color: #FFD43B; text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <h1>
+      <span class="gu">જ્ઞાનસેતુ</span>
+      GyanSetu
+    </h1>
+    <p class="lead">
+      The first AI tutor that actually works in rural Gujarat — because it
+      doesn't need the internet. Powered by <strong>Gemma 4</strong> running
+      fully on-device via <strong>Google AI Edge LiteRT</strong>.
+    </p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="index.html">▶ Try the demo</a>
+      <a class="btn btn-secondary" href="#download">⬇ Get the APK</a>
+    </div>
+    <div class="badges">
+      <span class="badge">🌍 5 Indian languages</span>
+      <span class="badge">📵 Fully offline</span>
+      <span class="badge">🧠 Multi-tool agent</span>
+      <span class="badge">📷 Vision + Voice</span>
+      <span class="badge">⚖️ Apache 2.0</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <h2>What it does</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="emoji">📷</div>
+        <h3>Camera Scan</h3>
+        <p>Point at any object. Gemma 4's multimodal vision identifies it
+           bilingually with phonetic + a one-line story for the kid to learn.</p>
+      </div>
+      <div class="feature">
+        <div class="emoji">🎙</div>
+        <h3>Voice Q&amp;A</h3>
+        <p>Speak in Gujarati, Hindi, Marathi, Tamil or English. Audio goes
+           straight to Gemma 4 — no separate STT — answer streams back live
+           with offline TTS readback.</p>
+      </div>
+      <div class="feature">
+        <div class="emoji">🧠</div>
+        <h3>Multi-tool agent</h3>
+        <p>Eight on-device tools. The agent chains <code>query_syllabus</code>
+           → <code>generate_quiz</code> → <code>mark_homework</code> in a
+           single turn. All tool calls grounded in local Room SQLite — zero
+           hallucination on curriculum facts.</p>
+      </div>
+      <div class="feature">
+        <div class="emoji">👩‍🏫</div>
+        <h3>Teacher Mode</h3>
+        <p>Multi-student roster, per-topic mastery matrix, AI-generated focus
+           recommendations, exportable progress reports — all offline,
+           shareable via Bluetooth / WhatsApp.</p>
+      </div>
+      <div class="feature">
+        <div class="emoji">🏆</div>
+        <h3>Quiz + Match Game</h3>
+        <p>Adaptive difficulty driven by the kid's mastery scores. Confetti
+           celebration. Streaks, badges, achievements that follow the
+           student across sessions.</p>
+      </div>
+      <div class="feature">
+        <div class="emoji">♿</div>
+        <h3>Accessibility-first</h3>
+        <p>WCAG-AAA high-contrast palette, dyslexia-friendly font option,
+           three reading levels (Std 1-2 / 3-4 / 5), font-size scaling,
+           audio-first navigation for non-readers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tracks">
+  <div class="container">
+    <h2>Built for the Gemma 4 Good Hackathon</h2>
+    <div class="track-grid">
+      <div class="track">
+        <div class="prize">🏆 LiteRT Prize · $10,000</div>
+        <h4>Deep on-device LiteRT use</h4>
+        <p>Direct LiteRT-LM (<code>litertlm-android</code>) integration — not a
+           MediaPipe wrapper. Live GPU/CPU backend switching, in-app benchmark
+           with first-token / tokens-per-sec metrics, multimodal
+           text + vision + audio.</p>
+      </div>
+      <div class="track">
+        <div class="prize">🏆 Future of Education · $10,000</div>
+        <h4>Multi-tool agent that adapts</h4>
+        <p>8 tools chained per turn, per-student mastery tracking, adaptive
+           quiz difficulty, Teacher Mode with exportable reports.</p>
+      </div>
+      <div class="track">
+        <div class="prize">🏆 Digital Equity · $10,000</div>
+        <h4>5-language framework</h4>
+        <p>Gujarati, Hindi, Marathi, Tamil, English — full UI translation,
+           Gemma-following tutor, accessibility-first, fully offline for
+           connectivity-gap communities.</p>
+      </div>
+      <div class="track">
+        <div class="prize">🏆 Main Track · up to $50,000</div>
+        <h4>End-to-end execution</h4>
+        <p>Dual delivery (PWA + native APK), 22 Kotlin files / 3,700+ LOC,
+           reproducible build, real-world impact at 120M-child reach.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery">
+  <div class="container">
+    <h2>See it in action</h2>
+    <div class="shots">
+      <img src="docs/01-splash.png" alt="Splash screen" />
+      <img src="docs/02-home.png" alt="Home with 5 chunky tiles" />
+      <img src="docs/03-topics.png" alt="9 bilingual topic categories" />
+      <img src="docs/04-animals.png" alt="Animals topic items" />
+      <img src="docs/06-ask.png" alt="Ask flow with bilingual answer" />
+      <img src="docs/05-quiz.png" alt="Quiz screen" />
+      <img src="docs/07-match.png" alt="Match-pairs game" />
+    </div>
+  </div>
+</section>
+
+<section class="architecture">
+  <div class="container">
+    <h2>Architecture</h2>
+    <div class="arch-diagram">SplashScreen ──► LoadingScreen (download progress)
+                  │
+                  ▼
+              HomeScreen ──┬──► CameraScanScreen ──► gemma.analyzeImage(bitmap)
+                           │
+                           ├──► AskScreen ──► AppViewModel.askText
+                           │                    │
+                           │                    ▼
+                           │     ┌──── runAgentLoop (max 3 hops) ────┐
+                           │     │                                    │
+                           │     │  generateStream + tool detection  │
+                           │     │                                    │
+                           │     │     ┌─► ToolRegistry (8 tools) ◄──┘
+                           │     │     │
+                           │     │     │   query_syllabus,
+                           │     │     │   get_pronunciation,
+                           │     │     │   get_gk_fact,
+                           │     │     │   generate_quiz,
+                           │     │     │   explain_simpler,
+                           │     │     │   find_weak_topics,
+                           │     │     │   mark_homework,
+                           │     │     │   draw_diagram
+                           │     │     │
+                           │     │     ▼
+                           │     │   Room SQLite (GSEB syllabus)
+                           │     │
+                           │     └─► TextToSpeech (offline voice)
+                           │
+                           ├──► TopicsScreen ──► Room (byTopic)
+                           ├──► MatchScreen   ──► Room (random pairs)
+                           ├──► QuizScreen    ──► adaptive (mastery-weighted)
+                           ├──► TeacherMode   ──► DataStore + Share Intent
+                           └──► SettingsScreen ──► DataStore (lang, level, a11y)
+
+                                    │
+                                    ▼
+              GemmaInferenceEngine ──► com.google.ai.edge.litertlm:litertlm-android
+                                    └─► litert-community/gemma-4-E2B-it-litert-lm
+                                        (gemma-4-E2B-it.litertlm, ~2.5 GB)
+                                    │
+                                    └─► GPU backend (preferred) / CPU fallback
+                                        128K context · multimodal · streaming</div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Real-world impact</h2>
+    <p style="text-align:center;font-size:18px;font-weight:600;color:var(--ink-soft);max-width:760px;margin:0 auto 16px;">
+      GyanSetu is built for the children most underserved by the current generation of AI tutors —
+      the ones in classrooms with intermittent or no internet, learning in a language the global ecosystem barely supports.
+    </p>
+    <div class="impact-stats">
+      <div class="stat"><div class="num">120M+</div><div class="label">Std 1-5 children speaking the 5 supported languages</div></div>
+      <div class="stat"><div class="num">250M</div><div class="label">Rural Indians in 4G-spotty connectivity zones</div></div>
+      <div class="stat"><div class="num">~2 GB</div><div class="label">One-time model download. Then forever offline.</div></div>
+      <div class="stat"><div class="num">$0</div><div class="label">Per-query cost — no cloud calls, no subscriptions</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="download" style="background:white;">
+  <div class="container">
+    <h2>Get GyanSetu</h2>
+    <div class="features" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));">
+      <div class="feature">
+        <div class="emoji">📱</div>
+        <h3>Web demo (instant)</h3>
+        <p>Open <a href="index.html">index.html</a> in your browser. Phone-friendly. PWA-installable. Works offline after first load.</p>
+        <p style="margin-top:14px;"><a class="btn btn-primary" href="index.html">Open demo →</a></p>
+      </div>
+      <div class="feature">
+        <div class="emoji">🤖</div>
+        <h3>Native Android APK</h3>
+        <p>Open <code>android/</code> in Android Studio, sync, run. Sideload the Gemma 4 model file with <code>adb push</code>. Full multi-tool agent + Teacher Mode.</p>
+        <p style="margin-top:14px;"><a class="btn btn-secondary" href="README.md#testing--verification">Build instructions →</a></p>
+      </div>
+      <div class="feature">
+        <div class="emoji">📂</div>
+        <h3>Source code</h3>
+        <p>Public repo. Apache 2.0 (Gemma) + CC-BY 4.0 (our code). 22 Kotlin files, 3,700+ LOC. Single-file web demo.</p>
+        <p style="margin-top:14px;"><a class="btn btn-primary" href="https://github.com/your-org/gyansetu" style="background:var(--ink);color:white;">GitHub →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>GyanSetu</strong> · Made for rural Gujarat with ❤️</p>
+  <p>Powered by <a href="https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm">Gemma 4</a> ·
+     <a href="https://ai.google.dev/edge/litert">Google AI Edge LiteRT</a> ·
+     <a href="https://ai.google.dev/edge/mediapipe/solutions/genai/llm_inference">MediaPipe Tasks GenAI</a></p>
+  <p style="margin-top:16px;font-size:12px;opacity:0.65;">
+    Code CC-BY 4.0 · Gemma 4 weights Apache 2.0 (subject to Google's Gemma Terms of Use)
+  </p>
+</footer>
+
+</body>
+</html>
