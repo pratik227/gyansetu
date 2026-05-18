@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,6 +15,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +43,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +56,6 @@ import com.gyansetu.ui.components.ChunkyButton
 import com.gyansetu.ui.theme.GyanColors
 import com.gyansetu.viewmodel.AppViewModel
 import com.gyansetu.viewmodel.ScanState
-import java.io.ByteArrayOutputStream
 import java.util.Locale
 import java.util.concurrent.Executors
 
@@ -99,7 +102,22 @@ fun CameraScanScreen(viewModel: AppViewModel, onBack: () -> Unit) {
     val executor = remember { Executors.newSingleThreadExecutor() }
     DisposableEffect(Unit) { onDispose { executor.shutdown() } }
 
-    val imageCapture = remember { ImageCapture.Builder().build() }
+    // Frozen snapshot of the just-captured frame. We render this on top of the
+    // camera surface from the moment the shutter fires until the user taps
+    // "Again" — so the kid sees the photo they took, not the live preview
+    // wandering around behind the result card.
+    var captured by remember { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(scan) {
+        if (scan is ScanState.Idle) captured = null
+    }
+
+    val imageCapture = remember {
+        // MINIMIZE_LATENCY skips the quality post-processing pipeline; we're
+        // feeding the bytes to an AI tagger, not saving a portrait.
+        ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .build()
+    }
 
     Box(Modifier.fillMaxSize().background(Color(0xFF1A1A1A))) {
         if (hasCameraPermission) {
@@ -128,6 +146,17 @@ fun CameraScanScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                     view
                 },
             )
+            // Frozen captured frame overlays the live preview from the moment
+            // the shutter fires until reset. Sits above the camera surface but
+            // below the top bar and result card.
+            captured?.let { snap ->
+                Image(
+                    bitmap = snap.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize().background(Color.Black),
+                    contentScale = ContentScale.Fit,
+                )
+            }
         } else {
             Column(
                 Modifier.fillMaxSize().padding(24.dp),
@@ -190,7 +219,10 @@ fun CameraScanScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                                 .border(4.dp, Color(0x80FFFFFF), CircleShape)
                                 .clickable {
                                     captureToBitmap(imageCapture, executor) { bitmap ->
-                                        if (bitmap != null) viewModel.analyzeBitmap(bitmap)
+                                        if (bitmap != null) {
+                                            captured = bitmap
+                                            viewModel.analyzeBitmap(bitmap)
+                                        }
                                     }
                                 },
                             contentAlignment = Alignment.Center,
@@ -225,6 +257,11 @@ fun CameraScanScreen(viewModel: AppViewModel, onBack: () -> Unit) {
     }
 }
 
+// Target edge length fed into the vision encoder. Gemma's vision tower tiles
+// internally at 224/336, so 384 preserves enough detail while cutting JPEG
+// encode time, JNI bytes, and vision-encoder work vs. the previous 512.
+private const val SCAN_TARGET_PX = 384
+
 private fun captureToBitmap(
     imageCapture: ImageCapture,
     executor: java.util.concurrent.Executor,
@@ -237,17 +274,44 @@ private fun captureToBitmap(
                 try {
                     val buf = image.planes[0].buffer
                     val bytes = ByteArray(buf.remaining()).also { buf.get(it) }
-                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    // Downscale aggressively before sending to Gemma — full-res frames
-                    // are slow to encode and exceed model image size limits.
-                    val scaled = bmp?.let {
-                        val target = 512
-                        val r = target.toFloat() / maxOf(it.width, it.height)
-                        if (r < 1f) Bitmap.createScaledBitmap(
-                            it, (it.width * r).toInt(), (it.height * r).toInt(), true
-                        ) else it
+
+                    // Two-pass decode: read bounds first, pick a power-of-2
+                    // inSampleSize so we never materialize the full multi-MP
+                    // bitmap in memory. On a 12MP capture this is the
+                    // difference between ~250ms and ~30ms of decode work.
+                    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+                    val longEdge = maxOf(bounds.outWidth, bounds.outHeight)
+                    var sample = 1
+                    while (longEdge / (sample * 2) >= SCAN_TARGET_PX) sample *= 2
+
+                    val opts = BitmapFactory.Options().apply {
+                        inSampleSize = sample
+                        inPreferredConfig = Bitmap.Config.ARGB_8888
                     }
-                    onResult(scaled)
+                    var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
+                        ?: run { onResult(null); return }
+
+                    // Final exact scale to the target. filter=false (nearest
+                    // neighbor) — bilinear filtering costs CPU and an AI
+                    // tagger doesn't care about smooth edges.
+                    val r = SCAN_TARGET_PX.toFloat() / maxOf(bmp.width, bmp.height)
+                    if (r < 1f) {
+                        bmp = Bitmap.createScaledBitmap(
+                            bmp, (bmp.width * r).toInt(), (bmp.height * r).toInt(), false
+                        )
+                    }
+
+                    // Rotate to upright so portrait captures don't reach the
+                    // model sideways — that hurts recognition accuracy and
+                    // forces extra decode tokens.
+                    val rot = image.imageInfo.rotationDegrees
+                    if (rot != 0) {
+                        val m = Matrix().apply { postRotate(rot.toFloat()) }
+                        bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, m, false)
+                    }
+
+                    onResult(bmp)
                 } catch (t: Throwable) {
                     Log.e("CameraScan", "decode failed", t); onResult(null)
                 } finally {

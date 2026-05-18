@@ -141,14 +141,19 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         // Start preparing the engine immediately. UI subscribes to [engine] and
         // navigates from Loading → Home when it transitions to Ready.
         prepareEngine()
-        // As soon as Gemma is loaded, eagerly pre-generate one batch of quiz +
-        // match content so the kid sees fresh, model-authored cards instead of
-        // a 25-second loading screen on their first Quiz/Match tap.
+        // Pre-generate quiz/match/ask/tip content so the kid sees fresh cards
+        // on first tap. Critically: defer the first kick-off by 5s and stagger
+        // each subsequent job by 2s. cancelBackgroundJobs() only cancels Kotlin
+        // coroutines — it can't interrupt a native LiteRT-LM call that's
+        // already mid-decode — so an in-flight pre-warm holds the sessionMutex
+        // and forces user actions (camera scan, ask) to queue behind it. The
+        // staggered fire gives the user a window to grab the engine first.
         viewModelScope.launch {
             engine.first { it is EngineState.Ready }
-            ensureQuizContent()
-            ensureMatchContent()
-            ensureAskSuggestions()
+            kotlinx.coroutines.delay(5_000)
+            ensureQuizContent();        kotlinx.coroutines.delay(2_000)
+            ensureMatchContent();       kotlinx.coroutines.delay(2_000)
+            ensureAskSuggestions();     kotlinx.coroutines.delay(2_000)
             ensureDailyTip()
         }
     }

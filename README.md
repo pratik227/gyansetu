@@ -4,6 +4,12 @@
 Built for the Gemma-Good Hackathon. Two-track delivery so the demo runs *today* and the
 production APK ships with on-device Gemma running fully offline.
 
+### 📥 Download APK
+
+**[⬇ Download app-debug.apk (109 MB)](https://github.com/pratik227/gyansetu/releases/latest/download/app-debug.apk)**
+
+Install on Android 9+ (sideload — enable "Install unknown apps" for your file manager). On first launch the app downloads the Gemma 4 model (~3 GB) over Wi-Fi.
+
 ---
 
 ## Architecture decisions
